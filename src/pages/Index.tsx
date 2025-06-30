@@ -109,8 +109,8 @@ const Index = () => {
             <div className="text-center flex-1">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Job Application Counter</h1>
               <div className="text-sm text-gray-600 dark:text-gray-300">
-                <div className="font-medium">{date}</div>
-                <div className="font-mono">{time}</div>
+                
+                
               </div>
             </div>
             
