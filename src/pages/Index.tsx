@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import DailyCounter from '@/components/DailyCounter';
 import StreakTracker from '@/components/StreakTracker';
@@ -101,7 +102,7 @@ const Index = () => {
   const { date, time } = formatDateTime(currentDateTime);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 flex flex-col font-mono">
       {/* Header */}
       <header className="bg-white shadow-sm border-b px-4 py-6">
         <div className="max-w-6xl mx-auto">
@@ -143,7 +144,7 @@ const Index = () => {
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-center text-sm text-gray-600">
             <Copyright className="w-4 h-4 mr-2" />
-            <span>Developed by Surya Teja. All rights reserved.</span>
+            <span>Developed by Surya Teja Merugu. All rights reserved.</span>
           </div>
         </div>
       </footer>

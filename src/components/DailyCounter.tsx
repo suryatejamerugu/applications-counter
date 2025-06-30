@@ -26,7 +26,7 @@ const DailyCounter = ({ count, onCountChange }: DailyCounterProps) => {
   };
 
   return (
-    <Card className="h-full">
+    <Card className="h-full font-mono">
       <CardHeader className="text-center pb-3">
         <CardTitle className="text-lg font-medium text-gray-800">
           Today's Applications
@@ -35,7 +35,7 @@ const DailyCounter = ({ count, onCountChange }: DailyCounterProps) => {
       <CardContent className="text-center space-y-4">
         {/* Counter Display */}
         <div className="bg-blue-50 rounded-lg p-6">
-          <div className="text-4xl font-bold text-blue-600 mb-1">
+          <div className="text-4xl font-bold text-blue-600 mb-1 font-mono">
             {count}
           </div>
           <div className="text-sm text-blue-700">Applications</div>
@@ -47,7 +47,7 @@ const DailyCounter = ({ count, onCountChange }: DailyCounterProps) => {
             onClick={decrement}
             disabled={count <= 0}
             size="sm"
-            className="bg-red-500 hover:bg-red-600 text-white"
+            className="bg-red-500 hover:bg-red-600 text-white font-mono"
           >
             <Minus className="w-4 h-4" />
           </Button>
@@ -56,7 +56,7 @@ const DailyCounter = ({ count, onCountChange }: DailyCounterProps) => {
             onClick={reset}
             variant="outline"
             size="sm"
-            className="text-gray-600 border-gray-300"
+            className="text-gray-600 border-gray-300 font-mono"
           >
             Reset
           </Button>
@@ -65,7 +65,7 @@ const DailyCounter = ({ count, onCountChange }: DailyCounterProps) => {
             onClick={increment}
             disabled={count >= 999}
             size="sm"
-            className="bg-green-500 hover:bg-green-600 text-white"
+            className="bg-green-500 hover:bg-green-600 text-white font-mono"
           >
             <Plus className="w-4 h-4" />
           </Button>

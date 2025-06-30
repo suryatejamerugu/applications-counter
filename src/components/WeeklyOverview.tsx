@@ -38,7 +38,7 @@ const WeeklyOverview = ({ applicationData }: WeeklyOverviewProps) => {
   const weeklyAvg = Math.round(weeklyTotal / 7 * 10) / 10;
 
   return (
-    <Card className="h-full bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+    <Card className="h-full bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 font-mono">
       <CardHeader className="text-center pb-4">
         <CardTitle className="text-xl font-semibold text-gray-800">
           Weekly Overview
@@ -48,11 +48,11 @@ const WeeklyOverview = ({ applicationData }: WeeklyOverviewProps) => {
         {/* Weekly Stats */}
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="text-center p-4 bg-blue-50 rounded-lg">
-            <div className="text-2xl font-bold text-blue-600">{weeklyTotal}</div>
+            <div className="text-2xl font-bold text-blue-600 font-mono">{weeklyTotal}</div>
             <div className="text-sm text-blue-700">Total This Week</div>
           </div>
           <div className="text-center p-4 bg-green-50 rounded-lg">
-            <div className="text-2xl font-bold text-green-600">{weeklyAvg}</div>
+            <div className="text-2xl font-bold text-green-600 font-mono">{weeklyAvg}</div>
             <div className="text-sm text-green-700">Daily Average</div>
           </div>
         </div>
@@ -69,7 +69,7 @@ const WeeklyOverview = ({ applicationData }: WeeklyOverviewProps) => {
               <span className={`font-medium ${day.isToday ? 'text-purple-700' : 'text-gray-700'}`}>
                 {day.day} {day.isToday && '(Today)'}
               </span>
-              <span className={`font-bold ${
+              <span className={`font-bold font-mono ${
                 day.count > 10 ? 'text-green-600' : 
                 day.count > 5 ? 'text-blue-600' : 
                 day.count > 0 ? 'text-yellow-600' : 'text-gray-400'
