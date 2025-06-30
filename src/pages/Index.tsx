@@ -5,15 +5,23 @@ import StreakTracker from '@/components/StreakTracker';
 import Analytics from '@/components/Analytics';
 import WeeklyOverview from '@/components/WeeklyOverview';
 import { getStoredData, saveApplicationData, getTodaysCount, updateTodaysCount } from '@/lib/database';
-import { Copyright } from 'lucide-react';
+import { Copyright, Sun, Moon } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
 
 const Index = () => {
   const [todayCount, setTodayCount] = useState(0);
   const [streak, setStreak] = useState(0);
   const [applicationData, setApplicationData] = useState([]);
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   useEffect(() => {
+    // Load theme preference or set default to dark
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      setIsDarkMode(savedTheme === 'dark');
+    }
+    
     // Update date/time every second
     const timeInterval = setInterval(() => {
       setCurrentDateTime(new Date());
@@ -29,42 +37,34 @@ const Index = () => {
 
     loadData();
 
-    // Check for midnight reset
     const checkMidnightReset = () => {
       const now = new Date();
       const lastResetDate = localStorage.getItem('lastResetDate');
       const today = now.toDateString();
 
       if (lastResetDate !== today) {
-        // It's a new day, save yesterday's count and reset
         const yesterdayCount = getTodaysCount();
         if (yesterdayCount > 0) {
           saveApplicationData(yesterdayCount);
-          // Update streak if applications were made yesterday
           const storedData = getStoredData();
           const newStreak = (storedData.streak || 0) + 1;
           setStreak(newStreak);
           localStorage.setItem('streak', newStreak.toString());
         } else {
-          // Break streak if no applications yesterday
           setStreak(0);
           localStorage.setItem('streak', '0');
         }
         
-        // Reset today's count
         setTodayCount(0);
         updateTodaysCount(0);
         localStorage.setItem('lastResetDate', today);
         
-        // Reload application data
         const updatedData = getStoredData();
         setApplicationData(updatedData.applications || []);
       }
     };
 
     checkMidnightReset();
-
-    // Set up interval to check for midnight every minute
     const interval = setInterval(checkMidnightReset, 60000);
 
     return () => {
@@ -72,6 +72,16 @@ const Index = () => {
       clearInterval(timeInterval);
     };
   }, []);
+
+  useEffect(() => {
+    // Apply theme to document
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+  }, [isDarkMode]);
 
   const handleCountChange = (newCount: number) => {
     setTodayCount(newCount);
@@ -81,6 +91,10 @@ const Index = () => {
   const handleStreakChange = (newStreak: number) => {
     setStreak(newStreak);
     localStorage.setItem('streak', newStreak.toString());
+  };
+
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
   };
 
   const formatDateTime = (date: Date) => {
@@ -102,17 +116,30 @@ const Index = () => {
   const { date, time } = formatDateTime(currentDateTime);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col font-mono">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col font-mono transition-colors duration-300">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b px-4 py-6">
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700 px-4 py-6 transition-colors duration-300">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">
-              Job Application Tracker
-            </h1>
-            <div className="text-sm text-gray-600">
-              <div className="font-medium">{date}</div>
-              <div className="font-mono">{time}</div>
+          <div className="flex justify-between items-center">
+            <div className="text-center flex-1">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                Job Application Tracker
+              </h1>
+              <div className="text-sm text-gray-600 dark:text-gray-300">
+                <div className="font-medium">{date}</div>
+                <div className="font-mono">{time}</div>
+              </div>
+            </div>
+            
+            {/* Theme Toggle */}
+            <div className="flex items-center space-x-2">
+              <Sun className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+              <Switch
+                checked={isDarkMode}
+                onCheckedChange={toggleTheme}
+                className="data-[state=checked]:bg-blue-600"
+              />
+              <Moon className="w-4 h-4 text-gray-600 dark:text-gray-300" />
             </div>
           </div>
         </div>
@@ -140,9 +167,9 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t px-4 py-6">
+      <footer className="bg-white dark:bg-gray-800 border-t dark:border-gray-700 px-4 py-6 transition-colors duration-300">
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-center text-sm text-gray-600">
+          <div className="flex items-center justify-center text-sm text-gray-600 dark:text-gray-300">
             <Copyright className="w-4 h-4 mr-2" />
             <span>Developed by Surya Teja Merugu. All rights reserved.</span>
           </div>
