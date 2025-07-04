@@ -3,12 +3,18 @@ import { Plus, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
+interface ApplicationData {
+  date: string;
+  count: number;
+}
+
 interface DailyCounterProps {
   count: number;
   onCountChange: (count: number) => void;
+  applicationData: ApplicationData[];
 }
 
-const DailyCounter = ({ count, onCountChange }: DailyCounterProps) => {
+const DailyCounter = ({ count, onCountChange, applicationData }: DailyCounterProps) => {
   const increment = () => {
     if (count < 999) {
       onCountChange(count + 1);
@@ -38,6 +44,30 @@ const DailyCounter = ({ count, onCountChange }: DailyCounterProps) => {
     if (count >= 10) return 'Good work!';
     return 'Keep going!';
   };
+
+  const getLastApplicationDate = () => {
+    if (applicationData.length === 0) return null;
+    
+    // Sort by date and get the most recent
+    const sortedData = [...applicationData].sort((a, b) => 
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+    
+    const lastEntry = sortedData[0];
+    if (lastEntry && lastEntry.count > 0) {
+      const date = new Date(lastEntry.date);
+      return date.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+    }
+    
+    return null;
+  };
+
+  const lastApplicationDate = getLastApplicationDate();
 
   return (
     <Card className="h-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300 font-mono">
@@ -90,8 +120,15 @@ const DailyCounter = ({ count, onCountChange }: DailyCounterProps) => {
           </Button>
         </div>
 
-        <div className="text-sm text-gray-500 dark:text-gray-400">
-          Applications submitted today
+        <div className="space-y-2">
+          <div className="text-sm text-gray-500 dark:text-gray-400">
+            Applications submitted today
+          </div>
+          {lastApplicationDate && (
+            <div className="text-xs text-gray-400 dark:text-gray-500">
+              Last application: {lastApplicationDate}
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

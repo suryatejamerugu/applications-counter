@@ -1,24 +1,24 @@
+
 import { useState, useEffect } from 'react';
 import DailyCounter from '@/components/DailyCounter';
-import StreakTracker from '@/components/StreakTracker';
+import DaysApplied from '@/components/DaysApplied';
 import Analytics from '@/components/Analytics';
 import WeeklyOverview from '@/components/WeeklyOverview';
 import { getStoredData, saveApplicationData, getTodaysCount, updateTodaysCount } from '@/lib/database';
 import { Copyright, Sun, Moon } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
+
 const Index = () => {
   const [todayCount, setTodayCount] = useState(0);
-  const [streak, setStreak] = useState(0);
   const [applicationData, setApplicationData] = useState([]);
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
-  const [isDarkMode, setIsDarkMode] = useState(true);
-  useEffect(() => {
-    // Load theme preference or set default to dark
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    // Initialize from localStorage or default to dark
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      setIsDarkMode(savedTheme === 'dark');
-    }
+    return savedTheme ? savedTheme === 'dark' : true;
+  });
 
+  useEffect(() => {
     // Update date/time every second
     const timeInterval = setInterval(() => {
       setCurrentDateTime(new Date());
@@ -28,25 +28,19 @@ const Index = () => {
     const loadData = () => {
       const storedData = getStoredData();
       setTodayCount(getTodaysCount());
-      setStreak(storedData.streak || 0);
       setApplicationData(storedData.applications || []);
     };
     loadData();
+
     const checkMidnightReset = () => {
       const now = new Date();
       const lastResetDate = localStorage.getItem('lastResetDate');
       const today = now.toDateString();
+      
       if (lastResetDate !== today) {
         const yesterdayCount = getTodaysCount();
         if (yesterdayCount > 0) {
           saveApplicationData(yesterdayCount);
-          const storedData = getStoredData();
-          const newStreak = (storedData.streak || 0) + 1;
-          setStreak(newStreak);
-          localStorage.setItem('streak', newStreak.toString());
-        } else {
-          setStreak(0);
-          localStorage.setItem('streak', '0');
         }
         setTodayCount(0);
         updateTodaysCount(0);
@@ -55,15 +49,18 @@ const Index = () => {
         setApplicationData(updatedData.applications || []);
       }
     };
+    
     checkMidnightReset();
     const interval = setInterval(checkMidnightReset, 60000);
+
     return () => {
       clearInterval(interval);
       clearInterval(timeInterval);
     };
   }, []);
+
   useEffect(() => {
-    // Apply theme to document
+    // Apply theme to document and persist
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
     } else {
@@ -71,17 +68,16 @@ const Index = () => {
     }
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);
+
   const handleCountChange = (newCount: number) => {
     setTodayCount(newCount);
     updateTodaysCount(newCount);
   };
-  const handleStreakChange = (newStreak: number) => {
-    setStreak(newStreak);
-    localStorage.setItem('streak', newStreak.toString());
-  };
+
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
   };
+
   const formatDateTime = (date: Date) => {
     return {
       date: date.toLocaleDateString('en-US', {
@@ -97,11 +93,11 @@ const Index = () => {
       })
     };
   };
-  const {
-    date,
-    time
-  } = formatDateTime(currentDateTime);
-  return <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col font-mono transition-colors duration-300">
+
+  const { date, time } = formatDateTime(currentDateTime);
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col font-mono transition-colors duration-300">
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700 px-4 py-6 transition-colors duration-300">
         <div className="max-w-6xl mx-auto">
@@ -109,8 +105,8 @@ const Index = () => {
             <div className="text-center flex-1">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Job Application Counter</h1>
               <div className="text-sm text-gray-600 dark:text-gray-300">
-                
-                
+                <div>{date}</div>
+                <div>{time}</div>
               </div>
             </div>
             
@@ -129,9 +125,19 @@ const Index = () => {
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Counters Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <DailyCounter count={todayCount} onCountChange={handleCountChange} />
-            <StreakTracker streak={streak} onStreakChange={handleStreakChange} />
-            <WeeklyOverview applicationData={applicationData} />
+            <DailyCounter 
+              count={todayCount} 
+              onCountChange={handleCountChange} 
+              applicationData={applicationData}
+            />
+            <DaysApplied 
+              applicationData={applicationData}
+              todayCount={todayCount}
+            />
+            <WeeklyOverview 
+              applicationData={applicationData}
+              todayCount={todayCount}
+            />
           </div>
 
           {/* Analytics */}
@@ -148,6 +154,8 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;

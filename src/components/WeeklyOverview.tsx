@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface ApplicationData {
@@ -7,34 +8,55 @@ interface ApplicationData {
 
 interface WeeklyOverviewProps {
   applicationData: ApplicationData[];
+  todayCount: number;
 }
 
-const WeeklyOverview = ({ applicationData }: WeeklyOverviewProps) => {
+const WeeklyOverview = ({ applicationData, todayCount }: WeeklyOverviewProps) => {
   const getLast7Days = () => {
     const days = [];
+    const now = new Date();
+    
+    // Get the last 7 days including today
     for (let i = 6; i >= 0; i--) {
-      const date = new Date();
+      const date = new Date(now);
       date.setDate(date.getDate() - i);
-      days.push(date.toDateString());
+      days.push({
+        dateString: date.toDateString(),
+        date: date
+      });
     }
     return days;
   };
 
   const getWeeklyData = () => {
     const last7Days = getLast7Days();
-    return last7Days.map(day => {
-      const dayData = applicationData.find(data => data.date === day);
+    const today = new Date().toDateString();
+    
+    return last7Days.map(({ dateString, date }) => {
+      const isToday = dateString === today;
+      let count = 0;
+      
+      if (isToday) {
+        // For today, use the current todayCount
+        count = todayCount;
+      } else {
+        // For other days, look in historical data
+        const dayData = applicationData.find(data => data.date === dateString);
+        count = dayData ? dayData.count : 0;
+      }
+      
       return {
-        day: new Date(day).toLocaleDateString('en-US', { weekday: 'short' }),
-        count: dayData ? dayData.count : 0,
-        isToday: day === new Date().toDateString()
+        day: date.toLocaleDateString('en-US', { weekday: 'short' }),
+        count: count,
+        isToday: isToday,
+        fullDate: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
       };
     });
   };
 
   const weeklyData = getWeeklyData();
   const weeklyTotal = weeklyData.reduce((sum, day) => sum + day.count, 0);
-  const weeklyAvg = Math.round(weeklyTotal / 7 * 10) / 10;
+  const weeklyAvg = weeklyTotal > 0 ? Math.round(weeklyTotal / 7 * 10) / 10 : 0;
 
   return (
     <Card className="h-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300 font-mono">
@@ -67,14 +89,19 @@ const WeeklyOverview = ({ applicationData }: WeeklyOverviewProps) => {
                   : 'bg-gray-50 dark:bg-gray-700'
               }`}
             >
-              <span className={`font-medium ${
-                day.isToday 
-                  ? 'text-purple-700 dark:text-purple-300' 
-                  : 'text-gray-700 dark:text-gray-300'
-              }`}>
-                {day.day} {day.isToday && '(Today)'}
-              </span>
-              <span className={`font-bold font-mono ${
+              <div className="flex flex-col">
+                <span className={`font-medium ${
+                  day.isToday 
+                    ? 'text-purple-700 dark:text-purple-300' 
+                    : 'text-gray-700 dark:text-gray-300'
+                }`}>
+                  {day.day} {day.isToday && '(Today)'}
+                </span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {day.fullDate}
+                </span>
+              </div>
+              <span className={`font-bold font-mono text-lg ${
                 day.count > 10 ? 'text-green-600 dark:text-green-400' : 
                 day.count > 5 ? 'text-blue-600 dark:text-blue-400' : 
                 day.count > 0 ? 'text-yellow-600 dark:text-yellow-400' : 'text-gray-400 dark:text-gray-500'
