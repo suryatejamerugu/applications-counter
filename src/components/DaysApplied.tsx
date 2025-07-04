@@ -1,6 +1,4 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
 interface ApplicationData {
   date: string;
   count: number;
@@ -41,31 +39,24 @@ const DaysApplied = ({ applicationData, todayCount }: DaysAppliedProps) => {
   };
 
   return (
-    <Card className="h-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300 font-mono">
-      <CardHeader className="text-center pb-4">
-        <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
-          Days Applied
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="text-center space-y-6">
-        {/* Days Applied Display */}
-        <div className={`bg-gradient-to-r ${getDaysAppliedColor()} rounded-2xl p-8 text-white`}>
-          <div className="text-6xl font-bold mb-2 font-mono">
-            {daysApplied}
-          </div>
-          <div className="text-lg opacity-90">
-            {daysApplied === 1 ? 'Day Applied' : 'Days Applied'}
-          </div>
-          <div className="text-sm mt-2 opacity-80">
-            {getDaysAppliedText()}
-          </div>
+    <div className="space-y-3">
+      {/* Days Applied Display - Compact */}
+      <div className={`bg-gradient-to-r ${getDaysAppliedColor()} rounded-xl p-6 text-white`}>
+        <div className="text-4xl font-bold mb-1 font-mono">
+          {daysApplied}
         </div>
+        <div className="text-sm opacity-90">
+          {daysApplied === 1 ? 'Day Applied' : 'Days Applied'}
+        </div>
+        <div className="text-xs mt-1 opacity-80">
+          {getDaysAppliedText()}
+        </div>
+      </div>
 
-        <div className="text-sm text-gray-500 dark:text-gray-400">
-          Total number of unique days you applied to jobs
-        </div>
-      </CardContent>
-    </Card>
+      <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
+        Total unique days you applied to jobs
+      </div>
+    </div>
   );
 };
 

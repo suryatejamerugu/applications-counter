@@ -5,16 +5,16 @@ import Analytics from '@/components/Analytics';
 import WeeklyOverview from '@/components/WeeklyOverview';
 import { getStoredData, saveApplicationData, getTodaysCount, updateTodaysCount } from '@/lib/database';
 import { Copyright, Sun, Moon } from 'lucide-react';
-import { Switch } from '@/components/ui/switch';
+
 const Index = () => {
   const [todayCount, setTodayCount] = useState(0);
   const [applicationData, setApplicationData] = useState([]);
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    // Initialize from localStorage or default to dark
     const savedTheme = localStorage.getItem('theme');
     return savedTheme ? savedTheme === 'dark' : true;
   });
+
   useEffect(() => {
     // Update date/time every second
     const timeInterval = setInterval(() => {
@@ -51,6 +51,7 @@ const Index = () => {
       clearInterval(timeInterval);
     };
   }, []);
+
   useEffect(() => {
     // Apply theme to document and persist
     if (isDarkMode) {
@@ -60,13 +61,16 @@ const Index = () => {
     }
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);
+
   const handleCountChange = (newCount: number) => {
     setTodayCount(newCount);
     updateTodaysCount(newCount);
   };
+
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
   };
+
   const formatDateTime = (date: Date) => {
     return {
       date: date.toLocaleDateString('en-US', {
@@ -82,57 +86,98 @@ const Index = () => {
       })
     };
   };
-  const {
-    date,
-    time
-  } = formatDateTime(currentDateTime);
-  return <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col font-mono transition-colors duration-300">
+
+  const { date, time } = formatDateTime(currentDateTime);
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col font-mono transition-colors duration-300">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700 px-4 py-6 transition-colors duration-300">
-        <div className="max-w-6xl mx-auto">
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700 px-4 py-4 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center">
             <div className="text-center flex-1">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Job Application Counter</h1>
-              <div className="text-sm text-gray-600 dark:text-gray-300">
-                
-                
-              </div>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">Job Application Counter</h1>
             </div>
             
-            {/* Theme Toggle */}
-            <div className="flex items-center space-x-2">
-              <Sun className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-              <Switch checked={isDarkMode} onCheckedChange={toggleTheme} className="data-[state=checked]:bg-blue-600" />
-              <Moon className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-            </div>
+            {/* Theme Toggle - Icons Only */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
+              aria-label="Toggle theme"
+            >
+              {isDarkMode ? (
+                <Sun className="w-5 h-5 text-yellow-500" />
+              ) : (
+                <Moon className="w-5 h-5 text-gray-600" />
+              )}
+            </button>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 px-4 py-8">
-        <div className="max-w-6xl mx-auto space-y-8">
-          {/* Counters Row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <DailyCounter count={todayCount} onCountChange={handleCountChange} applicationData={applicationData} />
-            <DaysApplied applicationData={applicationData} todayCount={todayCount} />
-            <WeeklyOverview applicationData={applicationData} todayCount={todayCount} />
-          </div>
+      {/* Main Content - Compact Layout */}
+      <main className="flex-1 px-4 py-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column - Combined Today's Applications & Days Applied */}
+            <div className="lg:col-span-1">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 h-full">
+                <div className="space-y-8">
+                  {/* Today's Applications Section */}
+                  <div className="text-center">
+                    <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+                      Today's Applications
+                    </h2>
+                    <DailyCounter 
+                      count={todayCount} 
+                      onCountChange={handleCountChange} 
+                      applicationData={applicationData}
+                    />
+                  </div>
 
-          {/* Analytics */}
-          <Analytics applicationData={applicationData} />
+                  <div className="border-t dark:border-gray-700"></div>
+
+                  {/* Days Applied Section */}
+                  <div className="text-center">
+                    <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+                      Days Applied
+                    </h2>
+                    <DaysApplied 
+                      applicationData={applicationData} 
+                      todayCount={todayCount} 
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Middle Column - Weekly Overview */}
+            <div className="lg:col-span-1">
+              <WeeklyOverview 
+                applicationData={applicationData} 
+                todayCount={todayCount} 
+              />
+            </div>
+
+            {/* Right Column - Analytics */}
+            <div className="lg:col-span-1">
+              <Analytics applicationData={applicationData} />
+            </div>
+          </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="bg-white dark:bg-gray-800 border-t dark:border-gray-700 px-4 py-6 transition-colors duration-300">
-        <div className="max-w-6xl mx-auto">
+      <footer className="bg-white dark:bg-gray-800 border-t dark:border-gray-700 px-4 py-4 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center text-sm text-gray-600 dark:text-gray-300">
             <Copyright className="w-4 h-4 mr-2" />
             <span>Developed by Surya Teja Merugu. All rights reserved.</span>
           </div>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;

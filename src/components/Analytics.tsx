@@ -90,10 +90,10 @@ const Analytics = ({ applicationData }: AnalyticsProps) => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-          <p className="font-medium">{label}</p>
-          <p className="text-blue-600">
-            Applications: <span className="font-bold">{payload[0].value}</span>
+        <div className="bg-white dark:bg-gray-800 p-2 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg">
+          <p className="font-medium text-xs">{label}</p>
+          <p className="text-blue-600 dark:text-blue-400 text-xs">
+            Apps: <span className="font-bold">{payload[0].value}</span>
           </p>
         </div>
       );
@@ -102,89 +102,89 @@ const Analytics = ({ applicationData }: AnalyticsProps) => {
   };
 
   return (
-    <Card className="bg-white shadow-lg">
-      <CardHeader>
-        <CardTitle className="text-2xl font-semibold text-gray-800 text-center">
-          Application Analytics
+    <Card className="bg-white dark:bg-gray-800 shadow-lg h-full">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg font-semibold text-gray-800 dark:text-white text-center">
+          Analytics
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-4">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
-            <TabsTrigger value="week" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
-              Last 7 Days
+          <TabsList className="grid w-full grid-cols-3 mb-4 h-8">
+            <TabsTrigger value="week" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-xs">
+              7 Days
             </TabsTrigger>
-            <TabsTrigger value="month" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
-              Last 4 Weeks
+            <TabsTrigger value="month" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-xs">
+              4 Weeks
             </TabsTrigger>
-            <TabsTrigger value="year" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
-              Last 12 Months
+            <TabsTrigger value="year" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-xs">
+              12 Months
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="week" className="mt-6">
-            <div className="h-80">
+          <TabsContent value="week" className="mt-4">
+            <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={weeklyData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                   <XAxis 
                     dataKey="name" 
                     stroke="#666"
-                    fontSize={12}
+                    fontSize={10}
                   />
-                  <YAxis stroke="#666" fontSize={12} />
+                  <YAxis stroke="#666" fontSize={10} />
                   <Tooltip content={<CustomTooltip />} />
                   <Line 
                     type="monotone" 
                     dataKey="applications" 
                     stroke="#3b82f6" 
-                    strokeWidth={3}
-                    dot={{ fill: '#3b82f6', strokeWidth: 2, r: 6 }}
-                    activeDot={{ r: 8, fill: '#1d4ed8' }}
+                    strokeWidth={2}
+                    dot={{ fill: '#3b82f6', strokeWidth: 1, r: 3 }}
+                    activeDot={{ r: 4, fill: '#1d4ed8' }}
                   />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </TabsContent>
 
-          <TabsContent value="month" className="mt-6">
-            <div className="h-80">
+          <TabsContent value="month" className="mt-4">
+            <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={monthlyData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                   <XAxis 
                     dataKey="name" 
                     stroke="#666"
-                    fontSize={12}
+                    fontSize={10}
                   />
-                  <YAxis stroke="#666" fontSize={12} />
+                  <YAxis stroke="#666" fontSize={10} />
                   <Tooltip content={<CustomTooltip />} />
                   <Bar 
                     dataKey="applications" 
                     fill="#3b82f6"
-                    radius={[4, 4, 0, 0]}
+                    radius={[2, 2, 0, 0]}
                   />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </TabsContent>
 
-          <TabsContent value="year" className="mt-6">
-            <div className="h-80">
+          <TabsContent value="year" className="mt-4">
+            <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={yearlyData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                   <XAxis 
                     dataKey="name" 
                     stroke="#666"
-                    fontSize={12}
+                    fontSize={10}
                   />
-                  <YAxis stroke="#666" fontSize={12} />
+                  <YAxis stroke="#666" fontSize={10} />
                   <Tooltip content={<CustomTooltip />} />
                   <Bar 
                     dataKey="applications" 
                     fill="#8b5cf6"
-                    radius={[4, 4, 0, 0]}
+                    radius={[2, 2, 0, 0]}
                   />
                 </BarChart>
               </ResponsiveContainer>
