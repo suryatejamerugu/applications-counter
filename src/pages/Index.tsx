@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import DailyCounter from '@/components/DailyCounter';
 import DaysApplied from '@/components/DaysApplied';
@@ -7,7 +6,6 @@ import WeeklyOverview from '@/components/WeeklyOverview';
 import { getStoredData, saveApplicationData, getTodaysCount, updateTodaysCount } from '@/lib/database';
 import { Copyright, Sun, Moon } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
-
 const Index = () => {
   const [todayCount, setTodayCount] = useState(0);
   const [applicationData, setApplicationData] = useState([]);
@@ -17,7 +15,6 @@ const Index = () => {
     const savedTheme = localStorage.getItem('theme');
     return savedTheme ? savedTheme === 'dark' : true;
   });
-
   useEffect(() => {
     // Update date/time every second
     const timeInterval = setInterval(() => {
@@ -31,12 +28,10 @@ const Index = () => {
       setApplicationData(storedData.applications || []);
     };
     loadData();
-
     const checkMidnightReset = () => {
       const now = new Date();
       const lastResetDate = localStorage.getItem('lastResetDate');
       const today = now.toDateString();
-      
       if (lastResetDate !== today) {
         const yesterdayCount = getTodaysCount();
         if (yesterdayCount > 0) {
@@ -49,16 +44,13 @@ const Index = () => {
         setApplicationData(updatedData.applications || []);
       }
     };
-    
     checkMidnightReset();
     const interval = setInterval(checkMidnightReset, 60000);
-
     return () => {
       clearInterval(interval);
       clearInterval(timeInterval);
     };
   }, []);
-
   useEffect(() => {
     // Apply theme to document and persist
     if (isDarkMode) {
@@ -68,16 +60,13 @@ const Index = () => {
     }
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);
-
   const handleCountChange = (newCount: number) => {
     setTodayCount(newCount);
     updateTodaysCount(newCount);
   };
-
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
   };
-
   const formatDateTime = (date: Date) => {
     return {
       date: date.toLocaleDateString('en-US', {
@@ -93,11 +82,11 @@ const Index = () => {
       })
     };
   };
-
-  const { date, time } = formatDateTime(currentDateTime);
-
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col font-mono transition-colors duration-300">
+  const {
+    date,
+    time
+  } = formatDateTime(currentDateTime);
+  return <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col font-mono transition-colors duration-300">
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700 px-4 py-6 transition-colors duration-300">
         <div className="max-w-6xl mx-auto">
@@ -106,7 +95,7 @@ const Index = () => {
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Job Application Counter</h1>
               <div className="text-sm text-gray-600 dark:text-gray-300">
                 <div>{date}</div>
-                <div>{time}</div>
+                
               </div>
             </div>
             
@@ -125,19 +114,9 @@ const Index = () => {
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Counters Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <DailyCounter 
-              count={todayCount} 
-              onCountChange={handleCountChange} 
-              applicationData={applicationData}
-            />
-            <DaysApplied 
-              applicationData={applicationData}
-              todayCount={todayCount}
-            />
-            <WeeklyOverview 
-              applicationData={applicationData}
-              todayCount={todayCount}
-            />
+            <DailyCounter count={todayCount} onCountChange={handleCountChange} applicationData={applicationData} />
+            <DaysApplied applicationData={applicationData} todayCount={todayCount} />
+            <WeeklyOverview applicationData={applicationData} todayCount={todayCount} />
           </div>
 
           {/* Analytics */}
@@ -154,8 +133,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
