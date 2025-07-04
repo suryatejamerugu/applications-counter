@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -11,9 +10,10 @@ interface ApplicationData {
 
 interface AnalyticsProps {
   applicationData: ApplicationData[];
+  todayCount: number;
 }
 
-const Analytics = ({ applicationData }: AnalyticsProps) => {
+const Analytics = ({ applicationData, todayCount }: AnalyticsProps) => {
   const [activeTab, setActiveTab] = useState('week');
 
   const getWeeklyData = () => {
@@ -83,9 +83,43 @@ const Analytics = ({ applicationData }: AnalyticsProps) => {
     return months;
   };
 
+  const getWeeklyTotal = () => {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    
+    const weeklyFromHistory = applicationData
+      .filter(app => new Date(app.date) >= oneWeekAgo)
+      .reduce((total, app) => total + app.count, 0);
+    
+    return weeklyFromHistory + todayCount;
+  };
+
+  const getMonthlyTotal = () => {
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+    
+    const monthlyFromHistory = applicationData
+      .filter(app => new Date(app.date) >= oneMonthAgo)
+      .reduce((total, app) => total + app.count, 0);
+    
+    return monthlyFromHistory + todayCount;
+  };
+
+  const getOverallTotal = () => {
+    const overallFromHistory = applicationData.reduce((total, app) => total + app.count, 0);
+    return overallFromHistory + todayCount;
+  };
+
   const weeklyData = getWeeklyData();
   const monthlyData = getMonthlyData();
   const yearlyData = getYearlyData();
+
+  const totals = {
+    today: todayCount,
+    week: getWeeklyTotal(),
+    month: getMonthlyTotal(),
+    overall: getOverallTotal()
+  };
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -191,6 +225,28 @@ const Analytics = ({ applicationData }: AnalyticsProps) => {
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Totals Section */}
+        <div className="mt-4 pt-4 border-t dark:border-gray-600">
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-2 rounded text-center">
+              <div className="font-bold text-blue-600 dark:text-blue-400 font-mono">{totals.today}</div>
+              <div className="text-blue-700 dark:text-blue-300">Today</div>
+            </div>
+            <div className="bg-green-50 dark:bg-green-900/20 p-2 rounded text-center">
+              <div className="font-bold text-green-600 dark:text-green-400 font-mono">{totals.week}</div>
+              <div className="text-green-700 dark:text-green-300">This Week</div>
+            </div>
+            <div className="bg-purple-50 dark:bg-purple-900/20 p-2 rounded text-center">
+              <div className="font-bold text-purple-600 dark:text-purple-400 font-mono">{totals.month}</div>
+              <div className="text-purple-700 dark:text-purple-300">This Month</div>
+            </div>
+            <div className="bg-orange-50 dark:bg-orange-900/20 p-2 rounded text-center">
+              <div className="font-bold text-orange-600 dark:text-orange-400 font-mono">{totals.overall}</div>
+              <div className="text-orange-700 dark:text-orange-300">Overall</div>
+            </div>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

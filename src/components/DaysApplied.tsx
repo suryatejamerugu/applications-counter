@@ -1,4 +1,7 @@
 
+import { Plus, Minus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
 interface ApplicationData {
   date: string;
   count: number;
@@ -7,9 +10,11 @@ interface ApplicationData {
 interface DaysAppliedProps {
   applicationData: ApplicationData[];
   todayCount: number;
+  manualDaysOffset: number;
+  onManualDaysChange: (offset: number) => void;
 }
 
-const DaysApplied = ({ applicationData, todayCount }: DaysAppliedProps) => {
+const DaysApplied = ({ applicationData, todayCount, manualDaysOffset, onManualDaysChange }: DaysAppliedProps) => {
   const calculateDaysApplied = () => {
     // Count unique days from historical data
     const historicalDays = applicationData.filter(app => app.count > 0).length;
@@ -19,10 +24,10 @@ const DaysApplied = ({ applicationData, todayCount }: DaysAppliedProps) => {
     const todayInHistory = applicationData.some(app => app.date === today);
     const shouldAddToday = todayCount > 0 && !todayInHistory;
     
-    return historicalDays + (shouldAddToday ? 1 : 0);
+    return historicalDays + (shouldAddToday ? 1 : 0) + manualDaysOffset;
   };
 
-  const daysApplied = calculateDaysApplied();
+  const daysApplied = Math.max(0, calculateDaysApplied());
 
   const getDaysAppliedColor = () => {
     if (daysApplied >= 30) return 'from-yellow-400 to-orange-500';
@@ -38,6 +43,14 @@ const DaysApplied = ({ applicationData, todayCount }: DaysAppliedProps) => {
     return 'Keep it up!';
   };
 
+  const incrementDays = () => {
+    onManualDaysChange(manualDaysOffset + 1);
+  };
+
+  const decrementDays = () => {
+    onManualDaysChange(manualDaysOffset - 1);
+  };
+
   return (
     <div className="space-y-3">
       {/* Days Applied Display - Compact */}
@@ -51,6 +64,25 @@ const DaysApplied = ({ applicationData, todayCount }: DaysAppliedProps) => {
         <div className="text-xs mt-1 opacity-80">
           {getDaysAppliedText()}
         </div>
+      </div>
+
+      {/* Manual Adjustment Buttons */}
+      <div className="flex justify-center space-x-2">
+        <Button
+          onClick={decrementDays}
+          size="sm"
+          className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg transition-all duration-200 font-mono"
+        >
+          <Minus className="w-4 h-4" />
+        </Button>
+
+        <Button
+          onClick={incrementDays}
+          size="sm"
+          className="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg transition-all duration-200 font-mono"
+        >
+          <Plus className="w-4 h-4" />
+        </Button>
       </div>
 
       <div className="text-xs text-gray-500 dark:text-gray-400 text-center">

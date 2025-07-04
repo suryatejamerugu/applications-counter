@@ -9,6 +9,7 @@ import { Copyright, Sun, Moon } from 'lucide-react';
 const Index = () => {
   const [todayCount, setTodayCount] = useState(0);
   const [applicationData, setApplicationData] = useState([]);
+  const [manualDaysOffset, setManualDaysOffset] = useState(0);
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -26,8 +27,13 @@ const Index = () => {
       const storedData = getStoredData();
       setTodayCount(getTodaysCount());
       setApplicationData(storedData.applications || []);
+      
+      // Load manual days offset
+      const savedOffset = localStorage.getItem('manualDaysOffset');
+      setManualDaysOffset(savedOffset ? parseInt(savedOffset, 10) : 0);
     };
     loadData();
+
     const checkMidnightReset = () => {
       const now = new Date();
       const lastResetDate = localStorage.getItem('lastResetDate');
@@ -44,6 +50,7 @@ const Index = () => {
         setApplicationData(updatedData.applications || []);
       }
     };
+    
     checkMidnightReset();
     const interval = setInterval(checkMidnightReset, 60000);
     return () => {
@@ -85,6 +92,11 @@ const Index = () => {
         second: '2-digit'
       })
     };
+  };
+
+  const handleManualDaysChange = (offset: number) => {
+    setManualDaysOffset(offset);
+    localStorage.setItem('manualDaysOffset', offset.toString());
   };
 
   const { date, time } = formatDateTime(currentDateTime);
@@ -144,7 +156,9 @@ const Index = () => {
                     </h2>
                     <DaysApplied 
                       applicationData={applicationData} 
-                      todayCount={todayCount} 
+                      todayCount={todayCount}
+                      manualDaysOffset={manualDaysOffset}
+                      onManualDaysChange={handleManualDaysChange}
                     />
                   </div>
                 </div>
@@ -161,7 +175,10 @@ const Index = () => {
 
             {/* Right Column - Analytics */}
             <div className="lg:col-span-1">
-              <Analytics applicationData={applicationData} />
+              <Analytics 
+                applicationData={applicationData} 
+                todayCount={todayCount}
+              />
             </div>
           </div>
         </div>

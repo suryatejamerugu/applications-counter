@@ -16,10 +16,14 @@ const WeeklyOverview = ({ applicationData, todayCount }: WeeklyOverviewProps) =>
     const days = [];
     const now = new Date();
     
-    // Get the last 7 days including today
+    // Get Monday of current week
+    const currentDay = now.getDay();
+    const daysFromMonday = currentDay === 0 ? 6 : currentDay - 1; // Sunday = 0, so 6 days from Monday
+    
+    // Start from Monday of current week and go back 6 days to get full week
     for (let i = 6; i >= 0; i--) {
       const date = new Date(now);
-      date.setDate(date.getDate() - i);
+      date.setDate(date.getDate() - daysFromMonday - i);
       days.push({
         dateString: date.toDateString(),
         date: date
