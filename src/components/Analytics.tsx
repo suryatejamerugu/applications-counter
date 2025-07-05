@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -18,15 +19,26 @@ const Analytics = ({ applicationData, todayCount }: AnalyticsProps) => {
 
   const getWeeklyData = () => {
     const last7Days = [];
+    const today = new Date().toDateString();
+    
     for (let i = 6; i >= 0; i--) {
       const date = new Date();
       date.setDate(date.getDate() - i);
       const dateString = date.toDateString();
-      const dayData = applicationData.find(data => data.date === dateString);
+      
+      let count = 0;
+      if (dateString === today) {
+        // For today, use the current todayCount
+        count = todayCount;
+      } else {
+        // For other days, look in historical data
+        const dayData = applicationData.find(data => data.date === dateString);
+        count = dayData ? dayData.count : 0;
+      }
       
       last7Days.push({
         name: date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
-        applications: dayData ? dayData.count : 0,
+        applications: count,
         fullDate: dateString
       });
     }
@@ -36,6 +48,7 @@ const Analytics = ({ applicationData, todayCount }: AnalyticsProps) => {
   const getMonthlyData = () => {
     const weeks = [];
     const today = new Date();
+    const todayString = today.toDateString();
     
     for (let i = 3; i >= 0; i--) {
       const weekStart = new Date(today);
@@ -45,8 +58,13 @@ const Analytics = ({ applicationData, todayCount }: AnalyticsProps) => {
       
       let weekTotal = 0;
       for (let d = new Date(weekStart); d <= weekEnd; d.setDate(d.getDate() + 1)) {
-        const dayData = applicationData.find(data => data.date === d.toDateString());
-        if (dayData) weekTotal += dayData.count;
+        const dayString = d.toDateString();
+        if (dayString === todayString) {
+          weekTotal += todayCount;
+        } else {
+          const dayData = applicationData.find(data => data.date === dayString);
+          if (dayData) weekTotal += dayData.count;
+        }
       }
       
       weeks.push({
@@ -61,6 +79,7 @@ const Analytics = ({ applicationData, todayCount }: AnalyticsProps) => {
   const getYearlyData = () => {
     const months = [];
     const today = new Date();
+    const todayString = today.toDateString();
     
     for (let i = 11; i >= 0; i--) {
       const month = new Date(today.getFullYear(), today.getMonth() - i, 1);
@@ -71,8 +90,14 @@ const Analytics = ({ applicationData, todayCount }: AnalyticsProps) => {
       
       for (let day = 1; day <= daysInMonth; day++) {
         const date = new Date(month.getFullYear(), month.getMonth(), day);
-        const dayData = applicationData.find(data => data.date === date.toDateString());
-        if (dayData) monthTotal += dayData.count;
+        const dayString = date.toDateString();
+        
+        if (dayString === todayString) {
+          monthTotal += todayCount;
+        } else {
+          const dayData = applicationData.find(data => data.date === dayString);
+          if (dayData) monthTotal += dayData.count;
+        }
       }
       
       months.push({
@@ -84,29 +109,48 @@ const Analytics = ({ applicationData, todayCount }: AnalyticsProps) => {
   };
 
   const getWeeklyTotal = () => {
+    const today = new Date();
+    const todayString = today.toDateString();
     const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 6); // Last 7 days including today
     
+    let weeklyTotal = todayCount; // Start with today's count
+    
+    // Add historical data from the past 6 days
     const weeklyFromHistory = applicationData
-      .filter(app => new Date(app.date) >= oneWeekAgo)
+      .filter(app => {
+        const appDate = new Date(app.date);
+        return appDate >= oneWeekAgo && app.date !== todayString;
+      })
       .reduce((total, app) => total + app.count, 0);
     
-    return weeklyFromHistory + todayCount;
+    return weeklyTotal + weeklyFromHistory;
   };
 
   const getMonthlyTotal = () => {
+    const today = new Date();
+    const todayString = today.toDateString();
     const oneMonthAgo = new Date();
-    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+    oneMonthAgo.setDate(oneMonthAgo.getDate() - 29); // Last 30 days including today
     
+    let monthlyTotal = todayCount; // Start with today's count
+    
+    // Add historical data from the past 29 days
     const monthlyFromHistory = applicationData
-      .filter(app => new Date(app.date) >= oneMonthAgo)
+      .filter(app => {
+        const appDate = new Date(app.date);
+        return appDate >= oneMonthAgo && app.date !== todayString;
+      })
       .reduce((total, app) => total + app.count, 0);
     
-    return monthlyFromHistory + todayCount;
+    return monthlyTotal + monthlyFromHistory;
   };
 
   const getOverallTotal = () => {
-    const overallFromHistory = applicationData.reduce((total, app) => total + app.count, 0);
+    const todayString = new Date().toDateString();
+    const overallFromHistory = applicationData
+      .filter(app => app.date !== todayString)
+      .reduce((total, app) => total + app.count, 0);
     return overallFromHistory + todayCount;
   };
 
