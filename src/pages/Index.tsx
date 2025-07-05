@@ -108,7 +108,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center">
             <div className="text-center flex-1">
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">Job Application Counter</h1>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">Applications Counter</h1>
             </div>
             
             {/* Theme Toggle - Icons Only */}
@@ -131,25 +131,11 @@ const Index = () => {
       <main className="flex-1 px-4 py-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column - Combined Today's Applications & Days Applied */}
+            {/* Left Column - Combined Days Applied & Today's Applications */}
             <div className="lg:col-span-1">
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 h-full">
                 <div className="space-y-8">
-                  {/* Today's Applications Section */}
-                  <div className="text-center">
-                    <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
-                      Today's Applications
-                    </h2>
-                    <DailyCounter 
-                      count={todayCount} 
-                      onCountChange={handleCountChange} 
-                      applicationData={applicationData}
-                    />
-                  </div>
-
-                  <div className="border-t dark:border-gray-700"></div>
-
-                  {/* Days Applied Section */}
+                  {/* Days Applied Section - Now on top */}
                   <div className="text-center">
                     <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
                       Days Applied
@@ -159,6 +145,20 @@ const Index = () => {
                       todayCount={todayCount}
                       manualDaysOffset={manualDaysOffset}
                       onManualDaysChange={handleManualDaysChange}
+                    />
+                  </div>
+
+                  <div className="border-t dark:border-gray-700"></div>
+
+                  {/* Today's Applications Section - Now below */}
+                  <div className="text-center">
+                    <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+                      Today's Applications
+                    </h2>
+                    <DailyCounter 
+                      count={todayCount} 
+                      onCountChange={handleCountChange} 
+                      applicationData={applicationData}
                     />
                   </div>
                 </div>

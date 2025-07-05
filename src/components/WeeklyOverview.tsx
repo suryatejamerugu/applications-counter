@@ -16,14 +16,20 @@ const WeeklyOverview = ({ applicationData, todayCount }: WeeklyOverviewProps) =>
     const days = [];
     const now = new Date();
     
-    // Get Monday of current week
+    // Get current day of week (0 = Sunday, 1 = Monday, etc.)
     const currentDay = now.getDay();
-    const daysFromMonday = currentDay === 0 ? 6 : currentDay - 1; // Sunday = 0, so 6 days from Monday
     
-    // Start from Monday of current week and go back 6 days to get full week
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date(now);
-      date.setDate(date.getDate() - daysFromMonday - i);
+    // Calculate days since Monday (0 if today is Monday)
+    const daysSinceMonday = currentDay === 0 ? 6 : currentDay - 1;
+    
+    // Start from Monday of current week
+    const mondayOfCurrentWeek = new Date(now);
+    mondayOfCurrentWeek.setDate(now.getDate() - daysSinceMonday);
+    
+    // Generate 7 days starting from Monday
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(mondayOfCurrentWeek);
+      date.setDate(mondayOfCurrentWeek.getDate() + i);
       days.push({
         dateString: date.toDateString(),
         date: date
@@ -53,7 +59,8 @@ const WeeklyOverview = ({ applicationData, todayCount }: WeeklyOverviewProps) =>
         day: date.toLocaleDateString('en-US', { weekday: 'short' }),
         count: count,
         isToday: isToday,
-        fullDate: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+        fullDate: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        dateString: dateString
       };
     });
   };
@@ -82,11 +89,11 @@ const WeeklyOverview = ({ applicationData, todayCount }: WeeklyOverviewProps) =>
           </div>
         </div>
 
-        {/* Daily Breakdown */}
+        {/* Daily Breakdown - Monday to Sunday */}
         <div className="space-y-2">
           {weeklyData.map((day, index) => (
             <div 
-              key={index} 
+              key={day.dateString} 
               className={`flex justify-between items-center p-3 rounded-lg ${
                 day.isToday 
                   ? 'bg-purple-50 dark:bg-purple-900/20 border-2 border-purple-200 dark:border-purple-700' 
