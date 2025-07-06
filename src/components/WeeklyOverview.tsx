@@ -40,25 +40,32 @@ const WeeklyOverview = ({ applicationData, todayCount }: WeeklyOverviewProps) =>
 
   const getWeeklyData = () => {
     const last7Days = getLast7Days();
-    const today = new Date().toDateString();
+    const now = new Date();
+    const todayDateString = now.toDateString();
     
     return last7Days.map(({ dateString, date }) => {
-      const isToday = dateString === today;
       let count = 0;
       
-      if (isToday) {
-        // For today, use the current todayCount
+      // Check if this date is actually today (same year, month, and day)
+      const isActuallyToday = date.getFullYear() === now.getFullYear() &&
+                              date.getMonth() === now.getMonth() &&
+                              date.getDate() === now.getDate();
+      
+      if (isActuallyToday) {
+        // Only use todayCount if this is actually today
         count = todayCount;
+        console.log(`Using todayCount (${todayCount}) for today: ${dateString}`);
       } else {
-        // For other days, look in historical data
+        // For all other days, look in historical data only
         const dayData = applicationData.find(data => data.date === dateString);
         count = dayData ? dayData.count : 0;
+        console.log(`Using historical data for ${dateString}: ${count}`);
       }
       
       return {
         day: date.toLocaleDateString('en-US', { weekday: 'short' }),
         count: count,
-        isToday: isToday,
+        isToday: isActuallyToday,
         fullDate: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
         dateString: dateString
       };
@@ -68,6 +75,14 @@ const WeeklyOverview = ({ applicationData, todayCount }: WeeklyOverviewProps) =>
   const weeklyData = getWeeklyData();
   const weeklyTotal = weeklyData.reduce((sum, day) => sum + day.count, 0);
   const weeklyAvg = weeklyTotal > 0 ? Math.round(weeklyTotal / 7 * 10) / 10 : 0;
+
+  // Add debug logging
+  console.log('Weekly Overview Debug:', {
+    todayCount,
+    weeklyData: weeklyData.map(d => ({ day: d.day, count: d.count, isToday: d.isToday, dateString: d.dateString })),
+    weeklyTotal,
+    applicationData: applicationData.slice(0, 3) // First 3 entries for debugging
+  });
 
   return (
     <Card className="h-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300 font-mono">
