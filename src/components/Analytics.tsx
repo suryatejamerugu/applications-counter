@@ -19,7 +19,8 @@ const Analytics = ({ applicationData, todayCount }: AnalyticsProps) => {
 
   const getWeeklyData = () => {
     const last7Days = [];
-    const today = new Date().toDateString();
+    const today = new Date();
+    const todayString = today.toDateString();
     
     for (let i = 6; i >= 0; i--) {
       const date = new Date();
@@ -27,11 +28,11 @@ const Analytics = ({ applicationData, todayCount }: AnalyticsProps) => {
       const dateString = date.toDateString();
       
       let count = 0;
-      if (dateString === today) {
-        // For today, use the current todayCount
+      if (dateString === todayString && i === 0) {
+        // Only use todayCount for today (i === 0 means it's the current day)
         count = todayCount;
       } else {
-        // For other days, look in historical data
+        // For all other days (including past days), look in historical data only
         const dayData = applicationData.find(data => data.date === dateString);
         count = dayData ? dayData.count : 0;
       }
@@ -59,7 +60,8 @@ const Analytics = ({ applicationData, todayCount }: AnalyticsProps) => {
       let weekTotal = 0;
       for (let d = new Date(weekStart); d <= weekEnd; d.setDate(d.getDate() + 1)) {
         const dayString = d.toDateString();
-        if (dayString === todayString) {
+        if (dayString === todayString && d.toDateString() === today.toDateString()) {
+          // Only add todayCount if it's actually today
           weekTotal += todayCount;
         } else {
           const dayData = applicationData.find(data => data.date === dayString);
@@ -92,7 +94,11 @@ const Analytics = ({ applicationData, todayCount }: AnalyticsProps) => {
         const date = new Date(month.getFullYear(), month.getMonth(), day);
         const dayString = date.toDateString();
         
-        if (dayString === todayString) {
+        if (dayString === todayString && 
+            date.getDate() === today.getDate() && 
+            date.getMonth() === today.getMonth() && 
+            date.getFullYear() === today.getFullYear()) {
+          // Only add todayCount if it's actually today
           monthTotal += todayCount;
         } else {
           const dayData = applicationData.find(data => data.date === dayString);
