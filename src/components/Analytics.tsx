@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -38,7 +37,8 @@ const Analytics = ({ applicationData, todayCount }: AnalyticsProps) => {
       }
       
       last7Days.push({
-        name: date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+        name: date.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' }),
+        fullName: date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
         applications: count,
         fullDate: dateString
       });
@@ -173,9 +173,13 @@ const Analytics = ({ applicationData, todayCount }: AnalyticsProps) => {
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
+      // For weekly data, show the full date name in tooltip
+      const data = payload[0].payload;
+      const displayLabel = data.fullName || label;
+      
       return (
         <div className="bg-white dark:bg-gray-800 p-2 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg">
-          <p className="font-medium text-xs">{label}</p>
+          <p className="font-medium text-xs">{displayLabel}</p>
           <p className="text-blue-600 dark:text-blue-400 text-xs">
             Apps: <span className="font-bold">{payload[0].value}</span>
           </p>
@@ -209,12 +213,16 @@ const Analytics = ({ applicationData, todayCount }: AnalyticsProps) => {
           <TabsContent value="week" className="mt-4">
             <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={weeklyData}>
+                <LineChart data={weeklyData} margin={{ top: 5, right: 30, left: 20, bottom: 25 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                   <XAxis 
                     dataKey="name" 
                     stroke="#666"
-                    fontSize={10}
+                    fontSize={9}
+                    angle={-45}
+                    textAnchor="end"
+                    height={60}
+                    interval={0}
                   />
                   <YAxis stroke="#666" fontSize={10} />
                   <Tooltip content={<CustomTooltip />} />
@@ -234,7 +242,7 @@ const Analytics = ({ applicationData, todayCount }: AnalyticsProps) => {
           <TabsContent value="month" className="mt-4">
             <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={monthlyData}>
+                <BarChart data={monthlyData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                   <XAxis 
                     dataKey="name" 
@@ -256,7 +264,7 @@ const Analytics = ({ applicationData, todayCount }: AnalyticsProps) => {
           <TabsContent value="year" className="mt-4">
             <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={yearlyData}>
+                <BarChart data={yearlyData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                   <XAxis 
                     dataKey="name" 
