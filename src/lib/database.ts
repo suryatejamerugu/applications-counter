@@ -47,11 +47,13 @@ export const saveApplicationData = (count: number, date?: string): void => {
     app => app.date !== targetDate
   );
   
-  // Add new entry
-  filteredApplications.push({
-    date: targetDate,
-    count: count
-  });
+  // Add new entry only if count > 0
+  if (count > 0) {
+    filteredApplications.push({
+      date: targetDate,
+      count: count
+    });
+  }
   
   // Sort by date (most recent first)
   filteredApplications.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -70,6 +72,22 @@ export const saveApplicationData = (count: number, date?: string): void => {
   };
   
   saveStoredData(updatedData);
+};
+
+// Clear specific date's data (useful for fixing incorrect data)
+export const clearDateData = (dateString: string): void => {
+  const storedData = getStoredData();
+  const filteredApplications = storedData.applications.filter(
+    app => app.date !== dateString
+  );
+  
+  const updatedData = {
+    ...storedData,
+    applications: filteredApplications
+  };
+  
+  saveStoredData(updatedData);
+  console.log(`Cleared data for ${dateString}`);
 };
 
 export const getTodaysCount = (): number => {

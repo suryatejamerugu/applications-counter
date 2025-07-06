@@ -1,9 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import DailyCounter from '@/components/DailyCounter';
 import DaysApplied from '@/components/DaysApplied';
 import Analytics from '@/components/Analytics';
 import WeeklyOverview from '@/components/WeeklyOverview';
-import { getStoredData, saveApplicationData, getTodaysCount, updateTodaysCount } from '@/lib/database';
+import { getStoredData, saveApplicationData, getTodaysCount, updateTodaysCount, clearDateData } from '@/lib/database';
 import { Copyright, Sun, Moon } from 'lucide-react';
 
 const Index = () => {
@@ -17,6 +18,21 @@ const Index = () => {
   });
 
   useEffect(() => {
+    // Clear the incorrect Saturday data on first load
+    const fixIncorrectData = () => {
+      const saturdayDate = 'Sat Jul 05 2025';
+      const storedData = getStoredData();
+      const saturdayEntry = storedData.applications.find(app => app.date === saturdayDate);
+      
+      // If Saturday has data but it shouldn't (based on user's report), clear it
+      if (saturdayEntry && saturdayEntry.count > 0) {
+        console.log(`Clearing incorrect data for ${saturdayDate}: ${saturdayEntry.count} applications`);
+        clearDateData(saturdayDate);
+      }
+    };
+    
+    fixIncorrectData();
+    
     // Update date/time every second
     const timeInterval = setInterval(() => {
       setCurrentDateTime(new Date());
@@ -38,14 +54,32 @@ const Index = () => {
       const now = new Date();
       const lastResetDate = localStorage.getItem('lastResetDate');
       const today = now.toDateString();
+      
       if (lastResetDate !== today) {
         const yesterdayCount = getTodaysCount();
-        if (yesterdayCount > 0) {
-          saveApplicationData(yesterdayCount);
+        
+        // Only save to historical data if there were actually applications yesterday
+        // AND if the last reset was actually yesterday (not from an old session)
+        if (yesterdayCount > 0 && lastResetDate) {
+          const lastReset = new Date(lastResetDate);
+          const yesterday = new Date(now);
+          yesterday.setDate(now.getDate() - 1);
+          
+          // Only save if lastResetDate was actually yesterday
+          if (lastReset.toDateString() === yesterday.toDateString()) {
+            console.log(`Saving yesterday's count: ${yesterdayCount} for ${lastResetDate}`);
+            saveApplicationData(yesterdayCount, lastResetDate);
+          } else {
+            console.log(`Not saving stale count. Last reset: ${lastResetDate}, Expected: ${yesterday.toDateString()}`);
+          }
         }
+        
+        // Reset today's count
         setTodayCount(0);
         updateTodaysCount(0);
         localStorage.setItem('lastResetDate', today);
+        
+        // Reload data to reflect changes
         const updatedData = getStoredData();
         setApplicationData(updatedData.applications || []);
       }
