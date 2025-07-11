@@ -142,7 +142,14 @@ const Index = () => {
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center">
             <div className="text-center flex-1">
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">Applications Counter</h1>
+              <div className="flex items-center justify-center gap-3">
+                <img 
+                  src="/lovable-uploads/cffb4d01-9b58-44eb-9119-72b0b0aa25ca.png" 
+                  alt="Applications Counter Logo" 
+                  className="w-8 h-8 object-contain"
+                />
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">Applications Counter</h1>
+              </div>
             </div>
             
             {/* Theme Toggle - Icons Only */}
