@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -101,5 +102,67 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Global hover effects */
+  button {
+    @apply transition-all duration-200 ease-in-out;
+  }
+
+  button:hover {
+    @apply transform scale-105;
+  }
+
+  button:active {
+    @apply transform scale-95;
+  }
+
+  /* Card hover effects */
+  .card {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  .card:hover {
+    @apply transform scale-[1.02] shadow-lg;
+  }
+
+  /* Input hover effects */
+  input, textarea, select {
+    @apply transition-all duration-200 ease-in-out;
+  }
+
+  input:hover, textarea:hover, select:hover {
+    @apply transform scale-[1.01] shadow-sm;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    @apply transform scale-[1.02] shadow-md ring-2 ring-blue-500/50;
+  }
+
+  /* Link hover effects */
+  a {
+    @apply transition-all duration-200 ease-in-out;
+  }
+
+  a:hover {
+    @apply transform scale-105;
+  }
+
+  /* Icon hover effects */
+  svg {
+    @apply transition-all duration-200 ease-in-out;
+  }
+
+  /* Custom utility classes */
+  .hover-lift {
+    @apply transition-all duration-300 ease-in-out hover:transform hover:scale-[1.02] hover:shadow-lg;
+  }
+
+  .hover-rotate {
+    @apply transition-transform duration-300 ease-in-out hover:rotate-6;
+  }
+
+  .hover-glow {
+    @apply transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-blue-500/25;
   }
 }
