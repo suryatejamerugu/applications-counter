@@ -1,9 +1,9 @@
-
 import { useState, useEffect } from 'react';
-import DailyCounter from '@/components/DailyCounter';
-import DaysApplied from '@/components/DaysApplied';
+import TodaysApplicationsCard from '@/components/TodaysApplicationsCard';
+import DaysAppliedCard from '@/components/DaysAppliedCard';
 import Analytics from '@/components/Analytics';
 import WeeklyOverview from '@/components/WeeklyOverview';
+import ProgressTracker from '@/components/ProgressTracker';
 import { getStoredData, saveApplicationData, getTodaysCount, updateTodaysCount, clearDateData } from '@/lib/database';
 import { Copyright, Sun, Moon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -116,7 +116,6 @@ const Index = () => {
 
   const handleLogoClick = () => {
     navigate('/');
-    // Scroll to top if already on home page
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -165,7 +164,6 @@ const Index = () => {
               </div>
             </div>
             
-            {/* Theme Toggle - Icons Only */}
             <button
               onClick={toggleTheme}
               className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 hover:scale-110 active:scale-95"
@@ -181,42 +179,26 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Main Content - Compact Layout */}
+      {/* Main Content */}
       <main className="flex-1 px-4 py-6">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column - Combined Days Applied & Today's Applications */}
-            <div className="lg:col-span-1">
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 h-full transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
-                <div className="space-y-8">
-                  {/* Days Applied Section - Now on top */}
-                  <div className="text-center">
-                    <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 transition-colors duration-300 hover:text-blue-600 dark:hover:text-blue-400">
-                      Days Applied
-                    </h2>
-                    <DaysApplied 
-                      applicationData={applicationData} 
-                      todayCount={todayCount}
-                      manualDaysOffset={manualDaysOffset}
-                      onManualDaysChange={handleManualDaysChange}
-                    />
-                  </div>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Left Column - Today's Applications and Days Applied as separate cards */}
+            <div className="lg:col-span-1 space-y-6">
+              {/* Today's Applications Card - Now on top */}
+              <TodaysApplicationsCard 
+                count={todayCount} 
+                onCountChange={handleCountChange} 
+                applicationData={applicationData}
+              />
 
-                  <div className="border-t dark:border-gray-700"></div>
-
-                  {/* Today's Applications Section - Now below */}
-                  <div className="text-center">
-                    <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 transition-colors duration-300 hover:text-blue-600 dark:hover:text-blue-400">
-                      Today's Applications
-                    </h2>
-                    <DailyCounter 
-                      count={todayCount} 
-                      onCountChange={handleCountChange} 
-                      applicationData={applicationData}
-                    />
-                  </div>
-                </div>
-              </div>
+              {/* Days Applied Card - Now below */}
+              <DaysAppliedCard 
+                applicationData={applicationData} 
+                todayCount={todayCount}
+                manualDaysOffset={manualDaysOffset}
+                onManualDaysChange={handleManualDaysChange}
+              />
             </div>
 
             {/* Middle Column - Weekly Overview */}
@@ -229,14 +211,20 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Right Column - Analytics */}
-            <div className="lg:col-span-1">
+            {/* Right Column - Analytics and Progress Tracker */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Analytics Card */}
               <div className="transition-all duration-300 hover:scale-[1.02]">
                 <Analytics 
                   applicationData={applicationData} 
                   todayCount={todayCount}
                 />
               </div>
+
+              {/* Progress Tracker Card - Below Analytics */}
+              <ProgressTracker 
+                todayCount={todayCount}
+              />
             </div>
           </div>
         </div>
