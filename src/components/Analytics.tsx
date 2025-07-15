@@ -190,13 +190,13 @@ const Analytics = ({ applicationData, todayCount }: AnalyticsProps) => {
   };
 
   return (
-    <Card className="bg-white dark:bg-gray-800 shadow-lg h-full">
+    <Card className="bg-white dark:bg-gray-800 shadow-lg h-fit">
       <CardHeader className="pb-3">
         <CardTitle className="text-lg font-semibold text-gray-800 dark:text-white text-center">
           Analytics
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4">
+      <CardContent className="p-4 pb-4">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-4 h-8">
             <TabsTrigger value="week" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-xs">
