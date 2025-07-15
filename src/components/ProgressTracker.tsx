@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Target, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -56,8 +55,8 @@ const ProgressTracker = ({ todayCount }: ProgressTrackerProps) => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] h-fit flex flex-col">
-      <div className="flex flex-col space-y-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] h-full flex flex-col">
+      <div className="flex flex-col h-full justify-between space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -78,7 +77,7 @@ const ProgressTracker = ({ todayCount }: ProgressTrackerProps) => {
         </div>
 
         {/* Progress Information */}
-        <div className="space-y-3">
+        <div className="space-y-3 flex-1">
           <div className="flex justify-between items-center text-sm">
             <span className="text-gray-600 dark:text-gray-300">
               {todayCount} of {dailyGoal} applications

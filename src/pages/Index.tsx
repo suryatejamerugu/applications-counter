@@ -183,59 +183,48 @@ const Index = () => {
       <main className="flex-1 px-4 py-6">
         <div className="max-w-7xl mx-auto">
           {/* Responsive Grid Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
             
-            {/* Left Column - Single column on all sizes */}
-            <div className="space-y-6">
-              {/* Today's Applications Card */}
+            {/* Today's Applications Card */}
+            <div className="h-full">
               <TodaysApplicationsCard 
                 count={todayCount} 
                 onCountChange={handleCountChange} 
                 applicationData={applicationData}
               />
+            </div>
 
-              {/* Days Applied Card */}
+            {/* Days Applied Card */}
+            <div className="h-full">
               <DaysAppliedCard 
                 applicationData={applicationData} 
                 todayCount={todayCount}
                 manualDaysOffset={manualDaysOffset}
                 onManualDaysChange={handleManualDaysChange}
               />
-
-              {/* Weekly Overview Card - Only on large screens in left column */}
-              <div className="hidden lg:block">
-                <WeeklyOverview 
-                  applicationData={applicationData} 
-                  todayCount={todayCount} 
-                />
-              </div>
             </div>
 
-            {/* Middle Column - Analytics and Progress Tracker with matching heights */}
-            <div className="lg:col-span-2 space-y-6">
-              
-              {/* Weekly Overview Card - Only on medium and small screens */}
-              <div className="lg:hidden">
-                <WeeklyOverview 
-                  applicationData={applicationData} 
-                  todayCount={todayCount} 
-                />
-              </div>
+            {/* Weekly Overview Card */}
+            <div className="h-full">
+              <WeeklyOverview 
+                applicationData={applicationData} 
+                todayCount={todayCount} 
+              />
+            </div>
 
-              {/* Analytics and Progress Tracker - Equal height flex container */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Analytics Card */}
-                <Analytics 
-                  applicationData={applicationData} 
-                  todayCount={todayCount}
-                />
+            {/* Analytics Card - Spans 2 columns on medium+ screens */}
+            <div className="h-full md:col-span-2 lg:col-span-2">
+              <Analytics 
+                applicationData={applicationData} 
+                todayCount={todayCount}
+              />
+            </div>
 
-                {/* Progress Tracker Card */}
-                <ProgressTracker 
-                  todayCount={todayCount}
-                />
-              </div>
-
+            {/* Progress Tracker Card */}
+            <div className="h-full md:col-span-2 lg:col-span-1">
+              <ProgressTracker 
+                todayCount={todayCount}
+              />
             </div>
 
           </div>
