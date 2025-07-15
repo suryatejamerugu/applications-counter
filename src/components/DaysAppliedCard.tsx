@@ -1,4 +1,3 @@
-
 import { Plus, Minus, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -49,25 +48,25 @@ const DaysAppliedCard = ({ applicationData, todayCount, manualDaysOffset, onManu
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
-      <div className="space-y-4">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] h-full flex flex-col">
+      <div className="flex flex-col h-full justify-between space-y-4">
         {/* Header */}
-        <div className="flex items-center justify-center gap-2 mb-4">
+        <div className="flex items-center justify-center gap-2">
           <Calendar className="w-5 h-5 text-blue-500 transition-transform duration-300 hover:rotate-12" />
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-white transition-colors duration-300 hover:text-blue-600 dark:hover:text-blue-400">
+          <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white transition-colors duration-300 hover:text-blue-600 dark:hover:text-blue-400">
             Days Applied
           </h2>
         </div>
 
         {/* Days Applied Display */}
-        <div className={`bg-gradient-to-r ${getDaysAppliedColor()} rounded-xl p-6 text-white transition-all duration-300 hover:scale-105`}>
-          <div className="text-4xl font-bold mb-1 font-mono">
+        <div className={`bg-gradient-to-r ${getDaysAppliedColor()} rounded-xl p-4 md:p-6 text-white transition-all duration-300 hover:scale-105 flex-1 flex flex-col justify-center`}>
+          <div className="text-3xl md:text-4xl font-bold mb-1 font-mono text-center">
             {daysApplied}
           </div>
-          <div className="text-sm opacity-90">
+          <div className="text-sm opacity-90 text-center">
             {daysApplied === 1 ? 'Day Applied' : 'Days Applied'}
           </div>
-          <div className="text-xs mt-1 opacity-80">
+          <div className="text-xs mt-1 opacity-80 text-center">
             {getDaysAppliedText()}
           </div>
         </div>

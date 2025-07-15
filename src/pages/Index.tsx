@@ -182,17 +182,20 @@ const Index = () => {
       {/* Main Content */}
       <main className="flex-1 px-4 py-6">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            {/* Left Column - Today's Applications and Days Applied as separate cards */}
-            <div className="lg:col-span-1 space-y-6">
-              {/* Today's Applications Card - Now on top */}
+          {/* Responsive Grid Layout */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
+            
+            {/* Today's Applications Card */}
+            <div className="h-full">
               <TodaysApplicationsCard 
                 count={todayCount} 
                 onCountChange={handleCountChange} 
                 applicationData={applicationData}
               />
+            </div>
 
-              {/* Days Applied Card - Now below */}
+            {/* Days Applied Card */}
+            <div className="h-full">
               <DaysAppliedCard 
                 applicationData={applicationData} 
                 todayCount={todayCount}
@@ -201,31 +204,29 @@ const Index = () => {
               />
             </div>
 
-            {/* Middle Column - Weekly Overview */}
-            <div className="lg:col-span-1">
-              <div className="transition-all duration-300 hover:scale-[1.02]">
-                <WeeklyOverview 
-                  applicationData={applicationData} 
-                  todayCount={todayCount} 
-                />
-              </div>
+            {/* Weekly Overview Card */}
+            <div className="h-full">
+              <WeeklyOverview 
+                applicationData={applicationData} 
+                todayCount={todayCount} 
+              />
             </div>
 
-            {/* Right Column - Analytics and Progress Tracker */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Analytics Card */}
-              <div className="transition-all duration-300 hover:scale-[1.02]">
-                <Analytics 
-                  applicationData={applicationData} 
-                  todayCount={todayCount}
-                />
-              </div>
+            {/* Analytics Card - Spans 2 columns on medium+ screens */}
+            <div className="h-full md:col-span-2 lg:col-span-2">
+              <Analytics 
+                applicationData={applicationData} 
+                todayCount={todayCount}
+              />
+            </div>
 
-              {/* Progress Tracker Card - Below Analytics */}
+            {/* Progress Tracker Card */}
+            <div className="h-full md:col-span-2 lg:col-span-1">
               <ProgressTracker 
                 todayCount={todayCount}
               />
             </div>
+
           </div>
         </div>
       </main>

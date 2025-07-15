@@ -1,9 +1,7 @@
-
 import { useState, useEffect } from 'react';
 import { Target, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
 
 interface ProgressTrackerProps {
   todayCount: number;
@@ -57,13 +55,13 @@ const ProgressTracker = ({ todayCount }: ProgressTrackerProps) => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
-      <div className="space-y-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] h-full flex flex-col">
+      <div className="flex flex-col h-full justify-between space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Target className="w-5 h-5 text-blue-500 transition-transform duration-300 hover:rotate-12" />
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white transition-colors duration-300 hover:text-blue-600 dark:hover:text-blue-400">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white transition-colors duration-300 hover:text-blue-600 dark:hover:text-blue-400">
               Daily Progress
             </h2>
           </div>
@@ -79,7 +77,7 @@ const ProgressTracker = ({ todayCount }: ProgressTrackerProps) => {
         </div>
 
         {/* Progress Information */}
-        <div className="space-y-3">
+        <div className="space-y-3 flex-1">
           <div className="flex justify-between items-center text-sm">
             <span className="text-gray-600 dark:text-gray-300">
               {todayCount} of {dailyGoal} applications
