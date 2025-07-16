@@ -57,8 +57,8 @@ const ProgressTracker = ({ todayCount }: ProgressTrackerProps) => {
   };
 
   return (
-    <Card className="bg-white dark:bg-gray-800 shadow-lg h-fit">
-      <CardHeader className="pb-3">
+    <Card className="bg-white dark:bg-gray-800 shadow-lg h-full flex flex-col">
+      <CardHeader className="pb-3 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Target className="w-5 h-5 text-blue-500 transition-transform duration-300 hover:rotate-12" />
@@ -78,10 +78,10 @@ const ProgressTracker = ({ todayCount }: ProgressTrackerProps) => {
         </div>
       </CardHeader>
       
-      <CardContent className="p-4 pb-4">
-        <div className="flex flex-col h-full space-y-4">
+      <CardContent className="p-4 pb-4 flex-1 flex flex-col">
+        <div className="flex flex-col h-full justify-between">
           {/* Progress Information */}
-          <div className="space-y-3">
+          <div className="space-y-3 flex-shrink-0">
             <div className="flex justify-between items-center text-sm">
               <span className="text-gray-600 dark:text-gray-300">
                 {todayCount} of {dailyGoal} applications
@@ -119,8 +119,8 @@ const ProgressTracker = ({ todayCount }: ProgressTrackerProps) => {
             </div>
           </div>
 
-          {/* Goal Setting */}
-          <div className="space-y-2">
+          {/* Middle Section - Goal Setting */}
+          <div className="space-y-2 flex-shrink-0 my-4">
             <label 
               htmlFor="dailyGoal" 
               className="block text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -144,15 +144,17 @@ const ProgressTracker = ({ todayCount }: ProgressTrackerProps) => {
             </div>
           </div>
 
-          {/* Motivational Message - Fixed height container */}
-          <div className="h-12 flex items-center justify-center">
-            {todayCount >= dailyGoal && (
-              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-2 text-center w-full">
-                <span className="text-green-700 dark:text-green-300 text-sm font-medium">
-                  🎯 Daily goal achieved! Keep up the great work!
-                </span>
-              </div>
-            )}
+          {/* Bottom Section - Motivational Message with fixed height */}
+          <div className="flex-1 flex items-end">
+            <div className="w-full h-16 flex items-center justify-center">
+              {todayCount >= dailyGoal && (
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 text-center w-full">
+                  <span className="text-green-700 dark:text-green-300 text-sm font-medium">
+                    🎯 Daily goal achieved! Keep up the great work!
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </CardContent>

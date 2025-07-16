@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import TodaysApplicationsCard from '@/components/TodaysApplicationsCard';
 import DaysAppliedCard from '@/components/DaysAppliedCard';
@@ -183,10 +184,10 @@ const Index = () => {
       <main className="flex-1 px-4 py-6">
         <div className="max-w-7xl mx-auto">
           {/* Responsive Grid Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
             {/* Today's Applications Card */}
-            <div className="h-full">
+            <div className="h-fit">
               <TodaysApplicationsCard 
                 count={todayCount} 
                 onCountChange={handleCountChange} 
@@ -195,7 +196,7 @@ const Index = () => {
             </div>
 
             {/* Days Applied Card */}
-            <div className="h-full">
+            <div className="h-fit">
               <DaysAppliedCard 
                 applicationData={applicationData} 
                 todayCount={todayCount}
@@ -205,23 +206,23 @@ const Index = () => {
             </div>
 
             {/* Weekly Overview Card */}
-            <div className="h-full">
+            <div className="h-fit">
               <WeeklyOverview 
                 applicationData={applicationData} 
                 todayCount={todayCount} 
               />
             </div>
 
-            {/* Analytics Card - Spans 2 columns on medium+ screens */}
-            <div className="h-full md:col-span-2 lg:col-span-2">
+            {/* Analytics Card - Responsive layout */}
+            <div className="h-fit md:col-span-2 lg:col-span-2">
               <Analytics 
                 applicationData={applicationData} 
                 todayCount={todayCount}
               />
             </div>
 
-            {/* Progress Tracker Card */}
-            <div className="h-full md:col-span-2 lg:col-span-1">
+            {/* Progress Tracker Card - Equal height on desktop, proper mobile stacking */}
+            <div className="h-fit md:col-span-2 lg:col-span-1">
               <ProgressTracker 
                 todayCount={todayCount}
               />
