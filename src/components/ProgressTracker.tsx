@@ -120,17 +120,6 @@ const ProgressTracker = ({ todayCount }: ProgressTrackerProps) => {
             </div>
           </div>
 
-          {/* Thumbs Up GIF - Only shown when goal is achieved */}
-          {isGoalAchieved && (
-            <div className="flex justify-center my-3 flex-shrink-0">
-              <img
-                src="https://media.giphy.com/media/111ebonMs90YLu/giphy.gif"
-                alt="Thumbs up celebration"
-                className="w-16 h-16 object-contain rounded-lg"
-              />
-            </div>
-          )}
-
           {/* Middle Section - Goal Setting */}
           <div className="space-y-2 flex-shrink-0 my-4">
             <label 
@@ -155,6 +144,17 @@ const ProgressTracker = ({ todayCount }: ProgressTrackerProps) => {
               </span>
             </div>
           </div>
+
+          {/* Thumbs Up GIF - Only shown when goal is achieved, positioned after Daily Goal */}
+          {isGoalAchieved && (
+            <div className="flex justify-center my-4 flex-shrink-0">
+              <img
+                src="https://media.giphy.com/media/111ebonMs90YLu/giphy.gif"
+                alt="Thumbs up celebration"
+                className="w-20 h-20 object-contain rounded-lg"
+              />
+            </div>
+          )}
 
           {/* Bottom Section - Motivational Message with fixed height */}
           <div className="flex-1 flex items-end">
