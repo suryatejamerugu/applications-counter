@@ -79,7 +79,7 @@ const ProgressTracker = ({ todayCount }: ProgressTrackerProps) => {
       </CardHeader>
       
       <CardContent className="p-4 pb-4">
-        <div className="flex flex-col justify-between h-full space-y-4">
+        <div className="flex flex-col h-full space-y-4">
           {/* Progress Information */}
           <div className="space-y-3">
             <div className="flex justify-between items-center text-sm">
@@ -144,14 +144,16 @@ const ProgressTracker = ({ todayCount }: ProgressTrackerProps) => {
             </div>
           </div>
 
-          {/* Motivational Message */}
-          {todayCount >= dailyGoal && (
-            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 text-center">
-              <span className="text-green-700 dark:text-green-300 text-sm font-medium">
-                🎯 Daily goal achieved! Keep up the great work!
-              </span>
-            </div>
-          )}
+          {/* Motivational Message - Fixed height container */}
+          <div className="h-12 flex items-center justify-center">
+            {todayCount >= dailyGoal && (
+              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-2 text-center w-full">
+                <span className="text-green-700 dark:text-green-300 text-sm font-medium">
+                  🎯 Daily goal achieved! Keep up the great work!
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>
