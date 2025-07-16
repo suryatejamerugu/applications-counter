@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import TodaysApplicationsCard from '@/components/TodaysApplicationsCard';
 import DaysAppliedCard from '@/components/DaysAppliedCard';
@@ -146,7 +145,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col font-mono transition-colors duration-300">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700 px-4 py-4 transition-colors duration-300">
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700 px-4 py-3 transition-colors duration-300">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center">
             <div className="text-center flex-1">
@@ -181,13 +180,13 @@ const Index = () => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 px-4 py-6">
+      <main className="flex-1 px-4 py-4">
         <div className="max-w-7xl mx-auto">
-          {/* Responsive Grid Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Optimized Desktop Grid Layout */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 lg:gap-5">
             
             {/* Today's Applications Card */}
-            <div className="h-fit">
+            <div className="lg:col-span-3">
               <TodaysApplicationsCard 
                 count={todayCount} 
                 onCountChange={handleCountChange} 
@@ -196,7 +195,7 @@ const Index = () => {
             </div>
 
             {/* Days Applied Card */}
-            <div className="h-fit">
+            <div className="lg:col-span-3">
               <DaysAppliedCard 
                 applicationData={applicationData} 
                 todayCount={todayCount}
@@ -206,24 +205,24 @@ const Index = () => {
             </div>
 
             {/* Weekly Overview Card */}
-            <div className="h-fit">
+            <div className="lg:col-span-3">
               <WeeklyOverview 
                 applicationData={applicationData} 
                 todayCount={todayCount} 
               />
             </div>
 
-            {/* Analytics Card - Responsive layout */}
-            <div className="h-fit md:col-span-2 lg:col-span-2">
-              <Analytics 
-                applicationData={applicationData} 
+            {/* Progress Tracker Card */}
+            <div className="lg:col-span-3">
+              <ProgressTracker 
                 todayCount={todayCount}
               />
             </div>
 
-            {/* Progress Tracker Card - Equal height on desktop, proper mobile stacking */}
-            <div className="h-fit md:col-span-2 lg:col-span-1">
-              <ProgressTracker 
+            {/* Analytics Card - Full Width */}
+            <div className="md:col-span-2 lg:col-span-12">
+              <Analytics 
+                applicationData={applicationData} 
                 todayCount={todayCount}
               />
             </div>
@@ -233,7 +232,7 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white dark:bg-gray-800 border-t dark:border-gray-700 px-4 py-4 transition-colors duration-300">
+      <footer className="bg-white dark:bg-gray-800 border-t dark:border-gray-700 px-4 py-3 transition-colors duration-300">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center text-sm text-gray-600 dark:text-gray-300 transition-colors duration-300 hover:text-gray-800 dark:hover:text-gray-100">
             <Copyright className="w-4 h-4 mr-2 transition-transform duration-300 hover:rotate-12" />
