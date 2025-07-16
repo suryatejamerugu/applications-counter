@@ -22,6 +22,7 @@ const ProgressTracker = ({ todayCount }: ProgressTrackerProps) => {
   }, [dailyGoal]);
 
   const progressPercentage = Math.min((todayCount / dailyGoal) * 100, 100);
+  const isGoalAchieved = todayCount >= dailyGoal;
 
   const getProgressColor = () => {
     if (progressPercentage >= 76) return 'from-green-500 to-green-600';
@@ -119,6 +120,17 @@ const ProgressTracker = ({ todayCount }: ProgressTrackerProps) => {
             </div>
           </div>
 
+          {/* Thumbs Up GIF - Only shown when goal is achieved */}
+          {isGoalAchieved && (
+            <div className="flex justify-center my-3 flex-shrink-0">
+              <img
+                src="https://media.giphy.com/media/111ebonMs90YLu/giphy.gif"
+                alt="Thumbs up celebration"
+                className="w-16 h-16 object-contain rounded-lg"
+              />
+            </div>
+          )}
+
           {/* Middle Section - Goal Setting */}
           <div className="space-y-2 flex-shrink-0 my-4">
             <label 
@@ -147,7 +159,7 @@ const ProgressTracker = ({ todayCount }: ProgressTrackerProps) => {
           {/* Bottom Section - Motivational Message with fixed height */}
           <div className="flex-1 flex items-end">
             <div className="w-full h-16 flex items-center justify-center">
-              {todayCount >= dailyGoal && (
+              {isGoalAchieved && (
                 <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 text-center w-full">
                   <span className="text-green-700 dark:text-green-300 text-sm font-medium">
                     🎯 Daily goal achieved! Keep up the great work!
