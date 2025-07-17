@@ -151,7 +151,7 @@ const ProgressTracker = ({ todayCount }: ProgressTrackerProps) => {
               <img
                 src="https://media.tenor.com/cEfuwIZ7IQMAAAAM/thumbs-up-double-thumbs-up.gif"
                 alt="Thumbs up celebration"
-                className="w-24 h-24 object-contain rounded-lg"
+                className="w-32 h-32 object-contain rounded-lg"
               />
             </div>
           )}
