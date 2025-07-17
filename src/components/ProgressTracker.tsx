@@ -145,13 +145,14 @@ const ProgressTracker = ({ todayCount }: ProgressTrackerProps) => {
             </div>
           </div>
 
-          {/* Thumbs Up GIF - Only shown when goal is achieved, positioned after Daily Goal */}
+          {/* Thumbs Up GIF - Only shown when goal is achieved, positioned between goal setter and achievement message */}
           {isGoalAchieved && (
-            <div className="flex justify-center my-4 flex-shrink-0">
+            <div className="flex justify-center my-6 flex-shrink-0">
               <img
                 src="https://media1.tenor.com/m/xjvmoEYtjwEAAAAd/thumbs-up-double-thumbs-up.gif"
                 alt="Thumbs up celebration"
-                className="w-36 h-36 object-contain rounded-lg"
+                className="w-full max-w-80 h-auto object-contain rounded-lg"
+                style={{ maxWidth: '320px' }}
               />
             </div>
           )}
