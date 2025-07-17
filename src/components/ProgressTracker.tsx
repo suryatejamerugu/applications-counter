@@ -149,9 +149,9 @@ const ProgressTracker = ({ todayCount }: ProgressTrackerProps) => {
           {isGoalAchieved && (
             <div className="flex justify-center my-4 flex-shrink-0">
               <img
-                src="https://media.tenor.com/cEfuwIZ7IQMAAAAM/thumbs-up-double-thumbs-up.gif"
+                src="https://media1.tenor.com/m/xjvmoEYtjwEAAAAd/thumbs-up-double-thumbs-up.gif"
                 alt="Thumbs up celebration"
-                className="w-32 h-32 object-contain rounded-lg"
+                className="w-36 h-36 object-contain rounded-lg"
               />
             </div>
           )}
