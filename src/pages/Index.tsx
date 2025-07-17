@@ -235,10 +235,17 @@ const Index = () => {
       <footer className="bg-white dark:bg-gray-800 border-t dark:border-gray-700 px-4 py-3 transition-colors duration-300">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center text-sm text-gray-600 dark:text-gray-300 transition-colors duration-300 hover:text-gray-800 dark:hover:text-gray-100">
-            <Copyright className="w-4 h-4 mr-2 transition-transform duration-300 hover:rotate-12" />
-            <span className="hover:scale-105 transition-transform duration-300 cursor-default">
-              Developed by Surya Teja Merugu. All rights reserved.
-            </span>
+            <div className="text-center">
+              <div className="flex items-center justify-center mb-1">
+                <Copyright className="w-4 h-4 mr-2 transition-transform duration-300 hover:rotate-12" />
+                <span className="hover:scale-105 transition-transform duration-300 cursor-default">
+                  2025 Surya Teja Merugu.
+                </span>
+              </div>
+              <div className="hover:scale-105 transition-transform duration-300 cursor-default">
+                All Rights Reserved.
+              </div>
+            </div>
           </div>
         </div>
       </footer>
