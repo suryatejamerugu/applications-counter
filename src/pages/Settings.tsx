@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Settings as SettingsIcon, Save, Trash2, Bell, Target } from 'lucide-react';
+import { Settings as SettingsIcon, Save, Trash2, Bell, Target, Lock } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useToast } from '@/hooks/use-toast';
 
@@ -28,6 +28,9 @@ const Settings: React.FC = () => {
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [changingPassword, setChangingPassword] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -104,6 +107,60 @@ const Settings: React.FC = () => {
       });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const changePassword = async () => {
+    if (!newPassword || !confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Please fill in both password fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: "Error", 
+        description: "Passwords do not match",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters long",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setChangingPassword(true);
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Password changed successfully"
+      });
+      
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setChangingPassword(false);
     }
   };
 
@@ -203,44 +260,64 @@ const Settings: React.FC = () => {
                 </div>
                 <Switch
                   checked={preferences.theme === 'dark'}
-                  onCheckedChange={(checked) => setPreferences({
-                    ...preferences,
-                    theme: checked ? 'dark' : 'light'
-                  })}
+                  onCheckedChange={(checked) => {
+                    const newTheme = checked ? 'dark' : 'light';
+                    setPreferences({
+                      ...preferences,
+                      theme: newTheme
+                    });
+                    // Apply theme immediately
+                    setTheme(newTheme);
+                  }}
                 />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Notifications */}
+        {/* Password Change */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Bell className="mr-2 h-4 w-4" />
-              Notifications
+              <Lock className="mr-2 h-4 w-4" />
+              Change Password
             </CardTitle>
             <CardDescription>
-              Manage your notification preferences
+              Update your account password
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Daily Reminders</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Get reminded to log your applications
-                  </p>
-                </div>
-                <Switch
-                  checked={preferences.notifications_enabled}
-                  onCheckedChange={(checked) => setPreferences({
-                    ...preferences,
-                    notifications_enabled: checked
-                  })}
+            <div className="space-y-4 max-w-md">
+              <div className="space-y-2">
+                <Label htmlFor="new_password">New Password</Label>
+                <Input
+                  id="new_password"
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter new password"
+                  minLength={6}
                 />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirm_password">Confirm Password</Label>
+                <Input
+                  id="confirm_password"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm new password"
+                  minLength={6}
+                />
+              </div>
+              <Button
+                onClick={changePassword}
+                disabled={changingPassword || !newPassword || !confirmPassword}
+                className="w-full sm:w-auto"
+              >
+                <Lock className="mr-2 h-4 w-4" />
+                {changingPassword ? 'Changing...' : 'Change Password'}
+              </Button>
             </div>
           </CardContent>
         </Card>

@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Github, Mail } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const Auth: React.FC = () => {
   const { user, loading, signInWithEmail, signUpWithEmail, signInWithGithub } = useAuth();
@@ -46,6 +47,36 @@ const Auth: React.FC = () => {
       });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast({
+        title: "Error",
+        description: "Please enter your email address first",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth?reset=true`
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Password reset email sent! Check your inbox."
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
     }
   };
 
@@ -103,7 +134,7 @@ const Auth: React.FC = () => {
               <Mail className="mr-2 h-4 w-4" />
               {isSubmitting ? 'Please wait...' : (isSignUp ? 'Sign Up' : 'Sign In')}
             </Button>
-            <div className="text-center">
+            <div className="text-center space-y-2">
               <Button
                 type="button"
                 variant="link"
@@ -112,6 +143,18 @@ const Auth: React.FC = () => {
               >
                 {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
               </Button>
+              {!isSignUp && (
+                <div>
+                  <Button
+                    type="button"
+                    variant="link"
+                    onClick={handleForgotPassword}
+                    className="text-sm text-muted-foreground"
+                  >
+                    Forgot Password?
+                  </Button>
+                </div>
+              )}
             </div>
           </form>
           

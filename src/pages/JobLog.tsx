@@ -31,6 +31,7 @@ const JobLog: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingApp, setEditingApp] = useState<JobApplication | null>(null);
+  const [showInterviewModal, setShowInterviewModal] = useState(false);
   const [formData, setFormData] = useState({
     company_name: '',
     job_title: '',
@@ -90,6 +91,12 @@ const JobLog: React.FC = () => {
           .eq('id', editingApp.id);
 
         if (error) throw error;
+        
+        // Show modal if status changed to Interviewing
+        if (formData.status === 'Interviewing' && editingApp.status !== 'Interviewing') {
+          setShowInterviewModal(true);
+        }
+        
         toast({
           title: "Success",
           description: "Application updated successfully"
@@ -178,9 +185,16 @@ const JobLog: React.FC = () => {
       case 'Applied': return 'default';
       case 'Interviewing': return 'secondary';
       case 'Rejected': return 'destructive';
-      case 'Offer': return 'default';
+      case 'Offer': return 'outline';
       default: return 'default';
     }
+  };
+
+  const getStatusBadgeClassName = (status: string) => {
+    if (status === 'Offer') {
+      return 'bg-green-500 text-white hover:bg-green-600';
+    }
+    return '';
   };
 
   if (loading) {
@@ -306,6 +320,29 @@ const JobLog: React.FC = () => {
             </form>
           </DialogContent>
         </Dialog>
+
+        {/* Interview Preparation Modal */}
+        <Dialog open={showInterviewModal} onOpenChange={setShowInterviewModal}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle className="text-center text-2xl">🎯 Get Ready!</DialogTitle>
+              <DialogDescription className="text-center text-lg">
+                Use HireSage AI for Interview Preparation — It's Free!
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-center space-x-4 pt-4">
+              <Button
+                onClick={() => {
+                  window.open('https://hiresageai.netlify.app/', '_blank');
+                  setShowInterviewModal(false);
+                }}
+                className="w-full"
+              >
+                Launch HireSage AI
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <Card>
@@ -339,7 +376,10 @@ const JobLog: React.FC = () => {
                       <TableCell>{app.job_title}</TableCell>
                       <TableCell>{new Date(app.date_applied).toLocaleDateString()}</TableCell>
                       <TableCell>
-                        <Badge variant={getStatusBadgeVariant(app.status)}>
+                        <Badge 
+                          variant={getStatusBadgeVariant(app.status)}
+                          className={getStatusBadgeClassName(app.status)}
+                        >
                           {app.status}
                         </Badge>
                       </TableCell>
