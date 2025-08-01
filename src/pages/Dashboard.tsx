@@ -3,10 +3,13 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Plus, BarChart3, FileText, Target } from 'lucide-react';
+import { BarChart3, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import TodaysApplicationsCard from '@/components/TodaysApplicationsCard';
+import DaysAppliedCard from '@/components/DaysAppliedCard';
+import WeeklyOverview from '@/components/WeeklyOverview';
+import DailyCounter from '@/components/DailyCounter';
+import HireSagePromoCard from '@/components/HireSagePromoCard';
 
 interface ApplicationData {
   date: string;
@@ -109,7 +112,7 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const incrementTodayCount = async () => {
+  const addQuickApplication = async () => {
     if (!user) return;
 
     try {
@@ -126,7 +129,7 @@ const Dashboard: React.FC = () => {
 
       if (error) throw error;
 
-      setTodayCount(prev => prev + 1);
+      await fetchDashboardData(); // Refresh all data
       toast({
         title: "Success",
         description: "Application added successfully",
@@ -141,6 +144,10 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const handleGoalUpdate = (newGoal: number) => {
+    setDailyGoal(newGoal);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -149,9 +156,6 @@ const Dashboard: React.FC = () => {
     );
   }
 
-  const progressPercentage = Math.min((todayCount / dailyGoal) * 100, 100);
-  const goalAchieved = todayCount >= dailyGoal;
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
@@ -159,99 +163,36 @@ const Dashboard: React.FC = () => {
         <p className="text-muted-foreground">Track your job application progress</p>
       </div>
 
+      {/* Main Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {/* Today's Applications */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Today's Applications</CardTitle>
-            <Plus className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{todayCount}</div>
-            <Button
-              onClick={incrementTodayCount}
-              className="mt-2 w-full"
-              size="sm"
-            >
-              Add Application
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Days Applied */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Days Applied</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{daysApplied}</div>
-            <p className="text-xs text-muted-foreground">
-              Total unique days
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Weekly Overview */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Weekly Total</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {weeklyData.reduce((sum, day) => sum + day.count, 0)}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Last 7 days
-            </p>
-          </CardContent>
-        </Card>
+        <TodaysApplicationsCard 
+          todayCount={todayCount}
+          onAddApplication={addQuickApplication}
+        />
+        <DaysAppliedCard daysApplied={daysApplied} />
+        <WeeklyOverview weeklyData={weeklyData} />
       </div>
 
-      {/* Daily Goal Progress */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Daily Goal Progress</CardTitle>
-          <CardDescription>
-            Goal: {dailyGoal} applications per day
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <Progress value={progressPercentage} className="w-full" />
-            <div className="flex justify-between text-sm">
-              <span>{todayCount} / {dailyGoal} applications</span>
-              <span>{Math.round(progressPercentage)}%</span>
-            </div>
-            {goalAchieved && (
-              <div className="flex items-center justify-center py-4">
-                <img 
-                  src="https://media1.tenor.com/m/xjvmoEYtjwEAAAAd/thumbs-up-double-thumbs-up.gif" 
-                  alt="Goal achieved!" 
-                  className="w-32 h-32 object-contain"
-                />
-              </div>
-            )}
-            {goalAchieved && (
-              <div className="text-center">
-                <p className="text-green-600 font-semibold">🎉 Goal achieved! Great work!</p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Daily Progress Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <DailyCounter 
+          todayCount={todayCount}
+          dailyGoal={dailyGoal}
+          onGoalUpdate={handleGoalUpdate}
+        />
+        <HireSagePromoCard />
+      </div>
 
       {/* Action Buttons */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Link to="/log">
-          <Button className="w-full" size="lg">
+          <Button className="w-full hover-glow" size="lg">
             <FileText className="mr-2 h-4 w-4" />
             Go to Job Log
           </Button>
         </Link>
         <Link to="/analytics">
-          <Button className="w-full" size="lg" variant="outline">
+          <Button className="w-full hover-glow" size="lg" variant="outline">
             <BarChart3 className="mr-2 h-4 w-4" />
             View Analytics
           </Button>

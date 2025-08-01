@@ -1,134 +1,34 @@
-import { Plus, Minus } from 'lucide-react';
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-
-interface ApplicationData {
-  date: string;
-  count: number;
-}
+import { Plus } from 'lucide-react';
 
 interface TodaysApplicationsCardProps {
-  count: number;
-  onCountChange: (count: number) => void;
-  applicationData: ApplicationData[];
+  todayCount: number;
+  onAddApplication: () => void;
 }
 
-const TodaysApplicationsCard = ({ count, onCountChange, applicationData }: TodaysApplicationsCardProps) => {
-  const increment = () => {
-    if (count < 999) {
-      onCountChange(count + 1);
-    }
-  };
-
-  const decrement = () => {
-    if (count > 0) {
-      onCountChange(count - 1);
-    }
-  };
-
-  const reset = () => {
-    onCountChange(0);
-  };
-
-  const getCountColor = () => {
-    if (count >= 50) return 'from-yellow-400 to-orange-500';
-    if (count >= 25) return 'from-green-400 to-blue-500';
-    if (count >= 10) return 'from-blue-400 to-purple-500';
-    return 'from-gray-400 to-gray-600';
-  };
-
-  const getCountText = () => {
-    if (count >= 50) return 'Excellent!';
-    if (count >= 25) return 'Great job!';
-    if (count >= 10) return 'Good work!';
-    return 'Keep going!';
-  };
-
-  const getLastApplicationDate = () => {
-    if (applicationData.length === 0) return null;
-    
-    const sortedData = [...applicationData].sort((a, b) => 
-      new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
-    
-    const lastEntry = sortedData[0];
-    if (lastEntry && lastEntry.count > 0) {
-      const date = new Date(lastEntry.date);
-      return date.toLocaleDateString('en-US', { 
-        weekday: 'short', 
-        month: 'short', 
-        day: 'numeric' 
-      });
-    }
-    
-    return null;
-  };
-
-  const lastApplicationDate = getLastApplicationDate();
-
+const TodaysApplicationsCard: React.FC<TodaysApplicationsCardProps> = ({
+  todayCount,
+  onAddApplication
+}) => {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] h-full flex flex-col">
-      <div className="flex flex-col h-full justify-between space-y-4">
-        {/* Header */}
-        <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white text-center transition-colors duration-300 hover:text-blue-600 dark:hover:text-blue-400">
-          Today's Applications
-        </h2>
-
-        {/* Counter Display */}
-        <div className={`bg-gradient-to-r ${getCountColor()} rounded-xl p-4 md:p-6 text-white transition-all duration-300 hover:scale-105 flex-1 flex flex-col justify-center`}>
-          <div className="text-3xl md:text-4xl font-bold mb-1 font-mono text-center">
-            {count}
-          </div>
-          <div className="text-sm opacity-90 text-center">
-            {count === 1 ? 'Application' : 'Applications'}
-          </div>
-          <div className="text-xs mt-1 opacity-80 text-center">
-            {getCountText()}
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex justify-center space-x-2">
-          <Button
-            onClick={decrement}
-            disabled={count <= 0}
-            size="sm"
-            className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg transition-all duration-200 disabled:opacity-50 font-mono hover:scale-110 active:scale-95"
-          >
-            <Minus className="w-4 h-4" />
-          </Button>
-
-          <Button
-            onClick={reset}
-            variant="outline"
-            size="sm"
-            className="px-3 py-2 rounded-lg border border-gray-300 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-500 transition-all duration-200 font-mono text-xs hover:scale-105"
-          >
-            Reset
-          </Button>
-
-          <Button
-            onClick={increment}
-            disabled={count >= 999}
-            size="sm"
-            className="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg transition-all duration-200 disabled:opacity-50 font-mono hover:scale-110 active:scale-95"
-          >
-            <Plus className="w-4 h-4" />
-          </Button>
-        </div>
-
-        {/* Info Section */}
-        <div className="space-y-1 text-center">
-          <div className="text-xs text-gray-500 dark:text-gray-400">
-            Applications submitted today
-          </div>
-          {lastApplicationDate && (
-            <div className="text-xs text-gray-400 dark:text-gray-500">
-              Last: {lastApplicationDate}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+    <Card className="hover-lift">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">Today's Applications</CardTitle>
+        <Plus className="h-4 w-4 text-muted-foreground" />
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{todayCount}</div>
+        <Button
+          onClick={onAddApplication}
+          className="mt-2 w-full hover-glow"
+          size="sm"
+        >
+          Add Application
+        </Button>
+      </CardContent>
+    </Card>
   );
 };
 

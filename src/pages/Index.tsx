@@ -188,27 +188,22 @@ const Index = () => {
             {/* Today's Applications Card */}
             <div className="lg:col-span-3">
               <TodaysApplicationsCard 
-                count={todayCount} 
-                onCountChange={handleCountChange} 
-                applicationData={applicationData}
+                todayCount={todayCount} 
+                onAddApplication={() => handleCountChange(todayCount + 1)}
               />
             </div>
 
             {/* Days Applied Card */}
             <div className="lg:col-span-3">
               <DaysAppliedCard 
-                applicationData={applicationData} 
-                todayCount={todayCount}
-                manualDaysOffset={manualDaysOffset}
-                onManualDaysChange={handleManualDaysChange}
+                daysApplied={applicationData.length}
               />
             </div>
 
             {/* Weekly Overview Card */}
             <div className="lg:col-span-3">
               <WeeklyOverview 
-                applicationData={applicationData} 
-                todayCount={todayCount} 
+                weeklyData={applicationData.map(app => ({ date: app.date, count: app.count }))}
               />
             </div>
 
