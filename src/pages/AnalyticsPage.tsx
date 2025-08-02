@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { useToast } from '@/hooks/use-toast';
+import { getLocalDateWithOffset } from '@/lib/dateUtils';
 
 interface JobApplication {
   id: string;
@@ -58,9 +59,9 @@ const AnalyticsPage: React.FC = () => {
   const getLast7DaysData = (): ChartData[] => {
     const last7Days = [];
     for (let i = 6; i >= 0; i--) {
+      const dateStr = getLocalDateWithOffset(-i);
       const date = new Date();
       date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
       const count = applications.filter(app => app.date_applied === dateStr).length;
       last7Days.push({
         name: date.toLocaleDateString('en-US', { weekday: 'short' }),
@@ -109,7 +110,7 @@ const AnalyticsPage: React.FC = () => {
       case 'Offer': return '#22C55E'; // Green
       case 'Rejected': return '#EF4444'; // Red
       case 'Interviewing': return '#3B82F6'; // Blue
-      case 'Applied': return '#0088FE'; // Default blue
+      case 'Applied': return '#EAB308'; // Yellow
       default: return '#8884D8'; // Fallback
     }
   };

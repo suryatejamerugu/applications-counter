@@ -8,7 +8,14 @@ const Footer: React.FC = () => {
         <div className="flex flex-col items-center space-y-4">
           {/* Links and Icons Row */}
           <div className="flex items-center justify-center space-x-6">
-            <span className="text-foreground">HireSage AI</span>
+            <a 
+              href="https://hiresageai.netlify.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground hover:text-primary transition-colors duration-200"
+            >
+              HireSage AI
+            </a>
             <a 
               href="https://suryatejamerugu.netlify.app/"
               target="_blank"

@@ -10,6 +10,7 @@ import DaysAppliedCard from '@/components/DaysAppliedCard';
 import WeeklyOverview from '@/components/WeeklyOverview';
 import DailyCounter from '@/components/DailyCounter';
 import HireSagePromoCard from '@/components/HireSagePromoCard';
+import { getCurrentLocalDate, getLocalDateWithOffset, formatDateLocal } from '@/lib/dateUtils';
 
 interface ApplicationData {
   date: string;
@@ -51,7 +52,7 @@ const Dashboard: React.FC = () => {
       }
 
       // Fetch today's applications count
-      const today = new Date().toISOString().split('T')[0];
+      const today = getCurrentLocalDate();
       const { data: todayApps, error: todayError } = await supabase
         .from('job_applications')
         .select('id')
@@ -72,13 +73,12 @@ const Dashboard: React.FC = () => {
       setDaysApplied(uniqueDaysSet.size);
 
       // Fetch weekly data
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+      const sevenDaysAgo = getLocalDateWithOffset(-6);
       const { data: weeklyApps, error: weeklyError } = await supabase
         .from('job_applications')
         .select('date_applied')
         .eq('user_id', user.id)
-        .gte('date_applied', sevenDaysAgo.toISOString().split('T')[0]);
+        .gte('date_applied', sevenDaysAgo);
 
       if (weeklyError) throw weeklyError;
 
@@ -90,9 +90,7 @@ const Dashboard: React.FC = () => {
 
       const weeklyArray: ApplicationData[] = [];
       for (let i = 6; i >= 0; i--) {
-        const date = new Date();
-        date.setDate(date.getDate() - i);
-        const dateStr = date.toISOString().split('T')[0];
+        const dateStr = getLocalDateWithOffset(-i);
         weeklyArray.push({
           date: dateStr,
           count: weeklyCount[dateStr] || 0
@@ -116,7 +114,7 @@ const Dashboard: React.FC = () => {
     if (!user) return;
 
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getCurrentLocalDate();
       const { error } = await supabase
         .from('job_applications')
         .insert({

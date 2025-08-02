@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { getCurrentLocalDate } from '@/lib/dateUtils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -35,7 +36,7 @@ const JobLog: React.FC = () => {
   const [formData, setFormData] = useState({
     company_name: '',
     job_title: '',
-    date_applied: new Date().toISOString().split('T')[0],
+    date_applied: getCurrentLocalDate(),
     application_url: '',
     notes: '',
     status: 'Applied'
@@ -46,7 +47,7 @@ const JobLog: React.FC = () => {
     setFormData({
       company_name: '',
       job_title: '',
-      date_applied: new Date().toISOString().split('T')[0],
+      date_applied: getCurrentLocalDate(),
       application_url: '',
       notes: '',
       status: 'Applied'

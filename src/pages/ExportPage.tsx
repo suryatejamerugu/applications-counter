@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Download, Filter } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { getCurrentLocalDate } from '@/lib/dateUtils';
 
 interface JobApplication {
   id: string;
@@ -122,7 +123,7 @@ const ExportPage: React.FC = () => {
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', `job_applications_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `job_applications_${getCurrentLocalDate()}.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
