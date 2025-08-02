@@ -10,6 +10,7 @@ import DaysAppliedCard from '@/components/DaysAppliedCard';
 import WeeklyOverview from '@/components/WeeklyOverview';
 import DailyCounter from '@/components/DailyCounter';
 import HireSagePromoCard from '@/components/HireSagePromoCard';
+import CelebrationModal from '@/components/CelebrationModal';
 import { getCurrentLocalDate, getLocalDateWithOffset, formatDateLocal } from '@/lib/dateUtils';
 
 interface ApplicationData {
@@ -29,6 +30,8 @@ const Dashboard: React.FC = () => {
   const [weeklyData, setWeeklyData] = useState<ApplicationData[]>([]);
   const [dailyGoal, setDailyGoal] = useState(5);
   const [loading, setLoading] = useState(true);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [previousTodayCount, setPreviousTodayCount] = useState(0);
 
   useEffect(() => {
     if (user) {
@@ -146,6 +149,30 @@ const Dashboard: React.FC = () => {
     setDailyGoal(newGoal);
   };
 
+  // Check if celebration should be shown
+  useEffect(() => {
+    const today = getCurrentLocalDate();
+    const celebrationShownKey = `celebration-shown-${today}`;
+    const celebrationShown = localStorage.getItem(celebrationShownKey);
+    
+    // Check if goal was just achieved (count increased and now meets/exceeds goal)
+    if (
+      todayCount >= dailyGoal && 
+      previousTodayCount < dailyGoal && 
+      !celebrationShown &&
+      todayCount > 0
+    ) {
+      setShowCelebration(true);
+      localStorage.setItem(celebrationShownKey, 'true');
+    }
+    
+    setPreviousTodayCount(todayCount);
+  }, [todayCount, dailyGoal, previousTodayCount]);
+
+  const handleCloseCelebration = () => {
+    setShowCelebration(false);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -196,6 +223,14 @@ const Dashboard: React.FC = () => {
           </Button>
         </Link>
       </div>
+
+      {/* Celebration Modal */}
+      <CelebrationModal
+        open={showCelebration}
+        onClose={handleCloseCelebration}
+        todayCount={todayCount}
+        dailyGoal={dailyGoal}
+      />
     </div>
   );
 };
