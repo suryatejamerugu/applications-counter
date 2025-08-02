@@ -104,7 +104,15 @@ const AnalyticsPage: React.FC = () => {
     return { currentStreak: uniqueDates.length > 0 ? currentStreak : 0, maxStreak };
   };
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Offer': return '#22C55E'; // Green
+      case 'Rejected': return '#EF4444'; // Red
+      case 'Interviewing': return '#3B82F6'; // Blue
+      case 'Applied': return '#0088FE'; // Default blue
+      default: return '#8884D8'; // Fallback
+    }
+  };
 
   if (loading) {
     return (
@@ -220,7 +228,7 @@ const AnalyticsPage: React.FC = () => {
                       dataKey="value"
                     >
                       {statusData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell key={`cell-${index}`} fill={getStatusColor(entry.name)} />
                       ))}
                     </Pie>
                     <Tooltip />

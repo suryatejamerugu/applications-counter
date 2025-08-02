@@ -41,6 +41,18 @@ const JobLog: React.FC = () => {
     status: 'Applied'
   });
 
+  // Reset form data helper
+  const resetFormData = () => {
+    setFormData({
+      company_name: '',
+      job_title: '',
+      date_applied: new Date().toISOString().split('T')[0],
+      application_url: '',
+      notes: '',
+      status: 'Applied'
+    });
+  };
+
   useEffect(() => {
     if (user) {
       fetchApplications();
@@ -123,14 +135,7 @@ const JobLog: React.FC = () => {
       }
 
       // Reset form and close dialog
-      setFormData({
-        company_name: '',
-        job_title: '',
-        date_applied: new Date().toISOString().split('T')[0],
-        application_url: '',
-        notes: '',
-        status: 'Applied'
-      });
+      resetFormData();
       setIsAddDialogOpen(false);
       setEditingApp(null);
       fetchApplications();
@@ -191,10 +196,16 @@ const JobLog: React.FC = () => {
   };
 
   const getStatusBadgeClassName = (status: string) => {
-    if (status === 'Offer') {
-      return 'bg-green-500 text-white hover:bg-green-600';
+    switch (status) {
+      case 'Offer':
+        return 'bg-green-500 text-white hover:bg-green-600';
+      case 'Rejected':
+        return 'bg-red-500 text-white hover:bg-red-600';
+      case 'Interviewing':
+        return 'bg-blue-500 text-white hover:bg-blue-600';
+      default:
+        return '';
     }
-    return '';
   };
 
   if (loading) {
@@ -301,14 +312,7 @@ const JobLog: React.FC = () => {
                   onClick={() => {
                     setIsAddDialogOpen(false);
                     setEditingApp(null);
-                    setFormData({
-                      company_name: '',
-                      job_title: '',
-                      date_applied: new Date().toISOString().split('T')[0],
-                      application_url: '',
-                      notes: '',
-                      status: 'Applied'
-                    });
+                    resetFormData();
                   }}
                 >
                   Cancel

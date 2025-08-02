@@ -4,18 +4,11 @@ import { Github, Linkedin } from 'lucide-react';
 const Footer: React.FC = () => {
   return (
     <footer className="border-t bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col items-center space-y-4">
           {/* Links and Icons Row */}
           <div className="flex items-center justify-center space-x-6">
-            <a 
-              href="https://hiresageai.netlify.app/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-foreground hover:text-primary transition-colors duration-200"
-            >
-              HireSage AI
-            </a>
+            <span className="text-foreground">HireSage AI</span>
             <a 
               href="https://suryatejamerugu.netlify.app/"
               target="_blank"
@@ -56,6 +49,9 @@ const Footer: React.FC = () => {
               </a>
             </div>
           </div>
+          
+          {/* Separator Line */}
+          <div className="w-full max-w-md border-t border-border"></div>
           
           {/* Copyright Text */}
           <div className="text-center text-sm text-muted-foreground">

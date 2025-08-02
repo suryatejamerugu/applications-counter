@@ -132,15 +132,6 @@ const DailyCounter: React.FC<DailyCounterProps> = ({
               <div className="text-center">
                 <p className="text-sm font-medium text-primary">{getProgressText()}</p>
               </div>
-              {goalAchieved && (
-                <div className="flex justify-center py-4">
-                  <img 
-                    src="https://media1.tenor.com/m/xjvmoEYtjwEAAAAd/thumbs-up-double-thumbs-up.gif" 
-                    alt="Goal achieved!" 
-                    className="w-24 h-24 object-contain hover-rotate"
-                  />
-                </div>
-              )}
             </>
           )}
         </div>
