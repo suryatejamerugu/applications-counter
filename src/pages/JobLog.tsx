@@ -379,7 +379,7 @@ const JobLog: React.FC = () => {
                     <TableRow key={app.id}>
                       <TableCell className="font-medium">{app.company_name}</TableCell>
                       <TableCell>{app.job_title}</TableCell>
-                      <TableCell>{new Date(app.date_applied).toLocaleDateString()}</TableCell>
+                      <TableCell>{new Date(app.date_applied + 'T00:00:00').toLocaleDateString()}</TableCell>
                       <TableCell>
                         <Badge 
                           variant={getStatusBadgeVariant(app.status)}

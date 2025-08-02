@@ -33,7 +33,7 @@ const WeeklyOverview: React.FC<WeeklyOverviewProps> = ({ weeklyData }) => {
                 style={{ height: `${Math.max(day.count * 8, 4)}px` }}
               />
               <span className="text-xs text-muted-foreground mt-1">
-                {new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}
+                {new Date(day.date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short' })}
               </span>
             </div>
           ))}
