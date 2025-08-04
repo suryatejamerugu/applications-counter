@@ -85,24 +85,69 @@ const AnalyticsPage: React.FC = () => {
 
   const getStreakData = () => {
     const dates = applications.map(app => app.date_applied);
-    const uniqueDates = [...new Set(dates)].sort();
+    const uniqueDates = [...new Set(dates)].sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
     
-    let currentStreak = 0;
+    if (uniqueDates.length === 0) {
+      return { currentStreak: 0, maxStreak: 0 };
+    }
+
     let maxStreak = 0;
-    let lastDate: Date | null = null;
-
-    uniqueDates.forEach(dateStr => {
-      const date = new Date(dateStr);
-      if (lastDate && (date.getTime() - lastDate.getTime()) === 24 * 60 * 60 * 1000) {
-        currentStreak++;
+    let tempStreak = 0;
+    let currentStreak = 0;
+    
+    // Calculate max streak by checking all consecutive sequences
+    for (let i = 0; i < uniqueDates.length; i++) {
+      const currentDate = new Date(uniqueDates[i]);
+      
+      if (i === 0) {
+        tempStreak = 1;
       } else {
-        currentStreak = 1;
+        const prevDate = new Date(uniqueDates[i - 1]);
+        const daysDiff = Math.round((currentDate.getTime() - prevDate.getTime()) / (24 * 60 * 60 * 1000));
+        
+        if (daysDiff === 1) {
+          tempStreak++;
+        } else {
+          maxStreak = Math.max(maxStreak, tempStreak);
+          tempStreak = 1;
+        }
       }
-      maxStreak = Math.max(maxStreak, currentStreak);
-      lastDate = date;
-    });
+    }
+    maxStreak = Math.max(maxStreak, tempStreak);
+    
+    // Calculate current streak (must end with today or yesterday)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
+    
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    
+    // Start from the most recent date and work backwards
+    if (uniqueDates.length > 0) {
+      const mostRecentDate = uniqueDates[uniqueDates.length - 1];
+      
+      // Current streak only counts if the most recent application was today or yesterday
+      if (mostRecentDate === todayStr || mostRecentDate === yesterdayStr) {
+        currentStreak = 1;
+        
+        // Work backwards to find consecutive days
+        for (let i = uniqueDates.length - 2; i >= 0; i--) {
+          const currentDate = new Date(uniqueDates[i + 1]);
+          const prevDate = new Date(uniqueDates[i]);
+          const daysDiff = Math.round((currentDate.getTime() - prevDate.getTime()) / (24 * 60 * 60 * 1000));
+          
+          if (daysDiff === 1) {
+            currentStreak++;
+          } else {
+            break;
+          }
+        }
+      }
+    }
 
-    return { currentStreak: uniqueDates.length > 0 ? currentStreak : 0, maxStreak };
+    return { currentStreak, maxStreak };
   };
 
   const getStatusColor = (status: string) => {
