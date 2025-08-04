@@ -5,6 +5,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { BarChart3, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import TodaysApplicationsCard from '@/components/TodaysApplicationsCard';
 import DaysAppliedCard from '@/components/DaysAppliedCard';
 import WeeklyOverview from '@/components/WeeklyOverview';
@@ -32,6 +37,15 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showCelebration, setShowCelebration] = useState(false);
   const [previousTodayCount, setPreviousTodayCount] = useState(0);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    company_name: '',
+    job_title: '',
+    date_applied: getCurrentLocalDate(),
+    application_url: '',
+    notes: '',
+    status: 'Applied'
+  });
 
   useEffect(() => {
     if (user) {
@@ -113,19 +127,37 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const addQuickApplication = async () => {
+  const resetFormData = () => {
+    setFormData({
+      company_name: '',
+      job_title: '',
+      date_applied: getCurrentLocalDate(),
+      application_url: '',
+      notes: '',
+      status: 'Applied'
+    });
+  };
+
+  const handleAddApplication = () => {
+    resetFormData();
+    setIsAddDialogOpen(true);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!user) return;
 
     try {
-      const today = getCurrentLocalDate();
       const { error } = await supabase
         .from('job_applications')
         .insert({
           user_id: user.id,
-          company_name: 'Quick Application',
-          job_title: 'Application',
-          date_applied: today,
-          status: 'Applied'
+          company_name: formData.company_name,
+          job_title: formData.job_title,
+          date_applied: formData.date_applied,
+          application_url: formData.application_url || null,
+          notes: formData.notes || null,
+          status: formData.status
         });
 
       if (error) throw error;
@@ -135,6 +167,9 @@ const Dashboard: React.FC = () => {
         title: "Success",
         description: "Application added successfully",
       });
+
+      resetFormData();
+      setIsAddDialogOpen(false);
     } catch (error) {
       console.error('Error adding application:', error);
       toast({
@@ -192,7 +227,7 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <TodaysApplicationsCard 
           todayCount={todayCount}
-          onAddApplication={addQuickApplication}
+          onAddApplication={handleAddApplication}
         />
         <DaysAppliedCard daysApplied={daysApplied} />
         <WeeklyOverview weeklyData={weeklyData} />
@@ -223,6 +258,100 @@ const Dashboard: React.FC = () => {
           </Button>
         </Link>
       </div>
+
+      {/* Add Application Modal */}
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add New Application</DialogTitle>
+            <DialogDescription>
+              Add a new job application to your tracker.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="company_name">Company Name</Label>
+                <Input
+                  id="company_name"
+                  value={formData.company_name}
+                  onChange={(e) => setFormData({...formData, company_name: e.target.value})}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="job_title">Job Title</Label>
+                <Input
+                  id="job_title"
+                  value={formData.job_title}
+                  onChange={(e) => setFormData({...formData, job_title: e.target.value})}
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="date_applied">Date Applied</Label>
+                <Input
+                  id="date_applied"
+                  type="date"
+                  value={formData.date_applied}
+                  onChange={(e) => setFormData({...formData, date_applied: e.target.value})}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="status">Status</Label>
+                <Select value={formData.status} onValueChange={(value) => setFormData({...formData, status: value})}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Applied">Applied</SelectItem>
+                    <SelectItem value="Interviewing">Interviewing</SelectItem>
+                    <SelectItem value="Rejected">Rejected</SelectItem>
+                    <SelectItem value="Offer">Offer</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="application_url">Application URL (Optional)</Label>
+              <Input
+                id="application_url"
+                type="url"
+                value={formData.application_url}
+                onChange={(e) => setFormData({...formData, application_url: e.target.value})}
+                placeholder="https://..."
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="notes">Notes (Optional)</Label>
+              <Textarea
+                id="notes"
+                value={formData.notes}
+                onChange={(e) => setFormData({...formData, notes: e.target.value})}
+                placeholder="Additional notes about this application..."
+              />
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setIsAddDialogOpen(false);
+                  resetFormData();
+                }}
+              >
+                Cancel
+              </Button>
+              <Button type="submit">
+                Add Application
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* Celebration Modal */}
       <CelebrationModal

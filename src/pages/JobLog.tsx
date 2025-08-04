@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit, Trash2, ExternalLink } from 'lucide-react';
+import { Plus, Edit, Trash2, ExternalLink, Filter, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface JobApplication {
@@ -29,10 +29,12 @@ const JobLog: React.FC = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [applications, setApplications] = useState<JobApplication[]>([]);
+  const [filteredApplications, setFilteredApplications] = useState<JobApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingApp, setEditingApp] = useState<JobApplication | null>(null);
   const [showInterviewModal, setShowInterviewModal] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
   const [formData, setFormData] = useState({
     company_name: '',
     job_title: '',
@@ -40,6 +42,16 @@ const JobLog: React.FC = () => {
     application_url: '',
     notes: '',
     status: 'Applied'
+  });
+
+  // Filter state
+  const [filters, setFilters] = useState({
+    dateFrom: '',
+    dateTo: '',
+    status: '',
+    company: '',
+    jobTitle: '',
+    sortBy: 'date_desc'
   });
 
   // Reset form data helper
@@ -72,6 +84,7 @@ const JobLog: React.FC = () => {
 
       if (error) throw error;
       setApplications(data || []);
+      setFilteredApplications(data || []);
     } catch (error) {
       console.error('Error fetching applications:', error);
       toast({
@@ -186,6 +199,63 @@ const JobLog: React.FC = () => {
     }
   };
 
+  // Filter and sort applications
+  useEffect(() => {
+    let filtered = [...applications];
+
+    // Apply filters
+    if (filters.dateFrom) {
+      filtered = filtered.filter(app => app.date_applied >= filters.dateFrom);
+    }
+    if (filters.dateTo) {
+      filtered = filtered.filter(app => app.date_applied <= filters.dateTo);
+    }
+    if (filters.status) {
+      filtered = filtered.filter(app => app.status === filters.status);
+    }
+    if (filters.company) {
+      filtered = filtered.filter(app => 
+        app.company_name.toLowerCase().includes(filters.company.toLowerCase())
+      );
+    }
+    if (filters.jobTitle) {
+      filtered = filtered.filter(app => 
+        app.job_title.toLowerCase().includes(filters.jobTitle.toLowerCase())
+      );
+    }
+
+    // Apply sorting
+    switch (filters.sortBy) {
+      case 'date_asc':
+        filtered.sort((a, b) => new Date(a.date_applied).getTime() - new Date(b.date_applied).getTime());
+        break;
+      case 'date_desc':
+        filtered.sort((a, b) => new Date(b.date_applied).getTime() - new Date(a.date_applied).getTime());
+        break;
+      case 'company_asc':
+        filtered.sort((a, b) => a.company_name.localeCompare(b.company_name));
+        break;
+      case 'status_asc':
+        filtered.sort((a, b) => a.status.localeCompare(b.status));
+        break;
+      default:
+        break;
+    }
+
+    setFilteredApplications(filtered);
+  }, [applications, filters]);
+
+  const clearFilters = () => {
+    setFilters({
+      dateFrom: '',
+      dateTo: '',
+      status: '',
+      company: '',
+      jobTitle: '',
+      sortBy: 'date_desc'
+    });
+  };
+
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
       case 'Applied': return 'default';
@@ -224,7 +294,15 @@ const JobLog: React.FC = () => {
           <h1 className="text-3xl font-bold text-foreground">Job Application Log</h1>
           <p className="text-muted-foreground">Track and manage your job applications</p>
         </div>
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <Filter className="mr-2 h-4 w-4" />
+            Filters
+          </Button>
+          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
@@ -325,42 +403,127 @@ const JobLog: React.FC = () => {
             </form>
           </DialogContent>
         </Dialog>
+        </div>
+      </div>
 
-        {/* Interview Preparation Modal */}
-        <Dialog open={showInterviewModal} onOpenChange={setShowInterviewModal}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle className="text-center text-2xl">🎯 Get Ready!</DialogTitle>
-              <DialogDescription className="text-center text-lg">
-                Use HireSage AI for Interview Preparation — It's Free!
-              </DialogDescription>
-            </DialogHeader>
-            <div className="flex justify-center space-x-4 pt-4">
-              <Button
-                onClick={() => {
-                  window.open('https://hiresageai.netlify.app/', '_blank');
-                  setShowInterviewModal(false);
-                }}
-                className="w-full"
-              >
-                Launch HireSage AI
+      {/* Filters Section */}
+      {showFilters && (
+        <Card className="mb-6">
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-lg">Filters & Sorting</CardTitle>
+              <Button variant="ghost" size="sm" onClick={clearFilters}>
+                <X className="mr-1 h-4 w-4" />
+                Clear All
               </Button>
             </div>
-          </DialogContent>
-        </Dialog>
-      </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label>Date From</Label>
+                <Input
+                  type="date"
+                  value={filters.dateFrom}
+                  onChange={(e) => setFilters({...filters, dateFrom: e.target.value})}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Date To</Label>
+                <Input
+                  type="date"
+                  value={filters.dateTo}
+                  onChange={(e) => setFilters({...filters, dateTo: e.target.value})}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Status</Label>
+                <Select value={filters.status} onValueChange={(value) => setFilters({...filters, status: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All statuses" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All statuses</SelectItem>
+                    <SelectItem value="Applied">Applied</SelectItem>
+                    <SelectItem value="Interviewing">Interviewing</SelectItem>
+                    <SelectItem value="Rejected">Rejected</SelectItem>
+                    <SelectItem value="Offer">Offer</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Company</Label>
+                <Input
+                  placeholder="Search by company..."
+                  value={filters.company}
+                  onChange={(e) => setFilters({...filters, company: e.target.value})}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Job Title</Label>
+                <Input
+                  placeholder="Search by job title..."
+                  value={filters.jobTitle}
+                  onChange={(e) => setFilters({...filters, jobTitle: e.target.value})}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Sort By</Label>
+                <Select value={filters.sortBy} onValueChange={(value) => setFilters({...filters, sortBy: value})}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="date_desc">Date (Newest First)</SelectItem>
+                    <SelectItem value="date_asc">Date (Oldest First)</SelectItem>
+                    <SelectItem value="company_asc">Company (A-Z)</SelectItem>
+                    <SelectItem value="status_asc">Status (A-Z)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Interview Preparation Modal */}
+      <Dialog open={showInterviewModal} onOpenChange={setShowInterviewModal}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-center text-2xl">🎯 Get Ready!</DialogTitle>
+            <DialogDescription className="text-center text-lg">
+              Use HireSage AI for Interview Preparation — It's Free!
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-center space-x-4 pt-4">
+            <Button
+              onClick={() => {
+                window.open('https://hiresageai.netlify.app/', '_blank');
+                setShowInterviewModal(false);
+              }}
+              className="w-full"
+            >
+              Launch HireSage AI
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Card>
         <CardHeader>
           <CardTitle>Your Applications</CardTitle>
           <CardDescription>
-            {applications.length} total applications
+            {filteredApplications.length} of {applications.length} applications
           </CardDescription>
         </CardHeader>
         <CardContent>
           {applications.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-muted-foreground">No applications found. Add your first application to get started!</p>
+            </div>
+          ) : filteredApplications.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No applications match your current filters.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -375,7 +538,7 @@ const JobLog: React.FC = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {applications.map((app) => (
+                  {filteredApplications.map((app) => (
                     <TableRow key={app.id}>
                       <TableCell className="font-medium">{app.company_name}</TableCell>
                       <TableCell>{app.job_title}</TableCell>
