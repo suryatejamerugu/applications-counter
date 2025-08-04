@@ -9,7 +9,7 @@ const HireSagePromoCard: React.FC = () => {
       <CardHeader>
         <CardTitle className="flex items-center text-primary">
           <Lightbulb className="mr-2 h-5 w-5" />
-          💡 Ace Your Interviews with HireSage AI
+          Ace Your Interviews with HireSage AI
         </CardTitle>
         <CardDescription className="text-foreground/80">
           Use our smart AI-powered tool to prepare for interviews for free.
