@@ -87,6 +87,8 @@ const AnalyticsPage: React.FC = () => {
     const dates = applications.map(app => app.date_applied);
     const uniqueDates = [...new Set(dates)].sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
     
+    console.log('🔍 Streak Debug - Unique dates:', uniqueDates);
+    
     if (uniqueDates.length === 0) {
       return { currentStreak: 0, maxStreak: 0 };
     }
@@ -105,15 +107,20 @@ const AnalyticsPage: React.FC = () => {
         const prevDate = new Date(uniqueDates[i - 1]);
         const daysDiff = Math.round((currentDate.getTime() - prevDate.getTime()) / (24 * 60 * 60 * 1000));
         
+        console.log(`📅 Day ${uniqueDates[i]} vs ${uniqueDates[i-1]}: ${daysDiff} days apart`);
+        
         if (daysDiff === 1) {
           tempStreak++;
+          console.log(`✅ Consecutive! Temp streak: ${tempStreak}`);
         } else {
           maxStreak = Math.max(maxStreak, tempStreak);
+          console.log(`❌ Not consecutive. Max streak updated to: ${maxStreak}, resetting temp to 1`);
           tempStreak = 1;
         }
       }
     }
     maxStreak = Math.max(maxStreak, tempStreak);
+    console.log(`🏆 Final max streak: ${maxStreak}`);
     
     // Calculate current streak (must end with today or yesterday)
     const today = new Date();
@@ -124,13 +131,17 @@ const AnalyticsPage: React.FC = () => {
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = yesterday.toISOString().split('T')[0];
     
+    console.log(`📅 Today: ${todayStr}, Yesterday: ${yesterdayStr}`);
+    
     // Start from the most recent date and work backwards
     if (uniqueDates.length > 0) {
       const mostRecentDate = uniqueDates[uniqueDates.length - 1];
+      console.log(`🕐 Most recent application date: ${mostRecentDate}`);
       
       // Current streak only counts if the most recent application was today or yesterday
       if (mostRecentDate === todayStr || mostRecentDate === yesterdayStr) {
         currentStreak = 1;
+        console.log(`✅ Recent enough for current streak. Starting with: ${currentStreak}`);
         
         // Work backwards to find consecutive days
         for (let i = uniqueDates.length - 2; i >= 0; i--) {
@@ -138,15 +149,22 @@ const AnalyticsPage: React.FC = () => {
           const prevDate = new Date(uniqueDates[i]);
           const daysDiff = Math.round((currentDate.getTime() - prevDate.getTime()) / (24 * 60 * 60 * 1000));
           
+          console.log(`🔙 Working backwards: ${uniqueDates[i+1]} vs ${uniqueDates[i]}: ${daysDiff} days apart`);
+          
           if (daysDiff === 1) {
             currentStreak++;
+            console.log(`✅ Consecutive! Current streak: ${currentStreak}`);
           } else {
+            console.log(`❌ Not consecutive. Breaking current streak at: ${currentStreak}`);
             break;
           }
         }
+      } else {
+        console.log(`❌ Most recent application not recent enough for current streak`);
       }
     }
 
+    console.log(`🏁 Final results - Current: ${currentStreak}, Max: ${maxStreak}`);
     return { currentStreak, maxStreak };
   };
 
