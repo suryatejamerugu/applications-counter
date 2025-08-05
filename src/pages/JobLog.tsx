@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit, Trash2, ExternalLink, Filter, X } from 'lucide-react';
+import { Plus, Edit, Trash2, ExternalLink, Filter, X, Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface JobApplication {
@@ -45,6 +45,7 @@ const JobLog: React.FC = () => {
   });
 
   // Filter state
+  const [globalSearch, setGlobalSearch] = useState('');
   const [filters, setFilters] = useState({
     dateFrom: '',
     dateTo: '',
@@ -203,6 +204,16 @@ const JobLog: React.FC = () => {
   useEffect(() => {
     let filtered = [...applications];
 
+    // Apply global search
+    if (globalSearch) {
+      const searchLower = globalSearch.toLowerCase();
+      filtered = filtered.filter(app => 
+        app.company_name.toLowerCase().includes(searchLower) ||
+        app.job_title.toLowerCase().includes(searchLower) ||
+        app.status.toLowerCase().includes(searchLower)
+      );
+    }
+
     // Apply filters
     if (filters.dateFrom) {
       filtered = filtered.filter(app => app.date_applied >= filters.dateFrom);
@@ -243,9 +254,10 @@ const JobLog: React.FC = () => {
     }
 
     setFilteredApplications(filtered);
-  }, [applications, filters]);
+  }, [applications, filters, globalSearch]);
 
   const clearFilters = () => {
+    setGlobalSearch('');
     setFilters({
       dateFrom: '',
       dateTo: '',
@@ -254,6 +266,27 @@ const JobLog: React.FC = () => {
       jobTitle: '',
       sortBy: 'date_desc'
     });
+  };
+
+  const setDatePreset = (preset: string) => {
+    const today = new Date();
+    const formatDate = (date: Date) => date.toISOString().split('T')[0];
+    
+    switch (preset) {
+      case 'today':
+        setFilters({...filters, dateFrom: formatDate(today), dateTo: formatDate(today)});
+        break;
+      case 'week':
+        const weekAgo = new Date(today);
+        weekAgo.setDate(today.getDate() - 7);
+        setFilters({...filters, dateFrom: formatDate(weekAgo), dateTo: formatDate(today)});
+        break;
+      case 'month':
+        const monthAgo = new Date(today);
+        monthAgo.setMonth(today.getMonth() - 1);
+        setFilters({...filters, dateFrom: formatDate(monthAgo), dateTo: formatDate(today)});
+        break;
+    }
   };
 
   const getStatusBadgeVariant = (status: string) => {
@@ -406,15 +439,66 @@ const JobLog: React.FC = () => {
         </div>
       </div>
 
-      {/* Filters Section */}
+      {/* Global Search Bar */}
+      <Card className="mb-6">
+        <CardContent className="pt-6">
+          <div className="flex flex-col gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search applications (company, job title, status)..."
+                value={globalSearch}
+                onChange={(e) => setGlobalSearch(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            
+            {/* Quick Date Presets */}
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setDatePreset('today')}
+              >
+                Today
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setDatePreset('week')}
+              >
+                Last 7 Days
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setDatePreset('month')}
+              >
+                This Month
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearFilters}
+                className="ml-auto"
+              >
+                <X className="mr-1 h-4 w-4" />
+                Clear All Filters
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Advanced Filters Section */}
       {showFilters && (
         <Card className="mb-6">
           <CardHeader>
             <div className="flex justify-between items-center">
-              <CardTitle className="text-lg">Filters & Sorting</CardTitle>
-              <Button variant="ghost" size="sm" onClick={clearFilters}>
+              <CardTitle className="text-lg">Advanced Filters</CardTitle>
+              <Button variant="ghost" size="sm" onClick={() => setShowFilters(false)}>
                 <X className="mr-1 h-4 w-4" />
-                Clear All
+                Hide
               </Button>
             </div>
           </CardHeader>
