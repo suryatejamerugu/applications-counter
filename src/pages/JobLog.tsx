@@ -522,12 +522,12 @@ const JobLog: React.FC = () => {
               </div>
               <div className="space-y-2">
                 <Label>Status</Label>
-                <Select value={filters.status} onValueChange={(value) => setFilters({...filters, status: value})}>
+                <Select value={filters.status} onValueChange={(value) => setFilters({...filters, status: value === 'all' ? '' : value})}>
                   <SelectTrigger>
                     <SelectValue placeholder="All statuses" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All statuses</SelectItem>
+                    <SelectItem value="all">All statuses</SelectItem>
                     <SelectItem value="Applied">Applied</SelectItem>
                     <SelectItem value="Interviewing">Interviewing</SelectItem>
                     <SelectItem value="Rejected">Rejected</SelectItem>
