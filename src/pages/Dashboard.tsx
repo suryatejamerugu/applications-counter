@@ -311,7 +311,7 @@ const Dashboard: React.FC = () => {
                     <SelectItem value="Interviewing">Interviewing</SelectItem>
                     <SelectItem value="Rejected">Rejected</SelectItem>
                     <SelectItem value="Offer">Offer</SelectItem>
-                    <SelectItem value="Exam">Exam</SelectItem>
+                    <SelectItem value="Assessment">Assessment</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

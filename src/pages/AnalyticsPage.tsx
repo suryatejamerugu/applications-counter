@@ -174,7 +174,7 @@ const AnalyticsPage: React.FC = () => {
       case 'Rejected': return '#EF4444'; // Red
       case 'Interviewing': return '#3B82F6'; // Blue
       case 'Applied': return '#EAB308'; // Yellow
-      case 'Exam': return '#8B5CF6'; // Purple
+      case 'Assessment': return '#8B5CF6'; // Purple
       default: return '#8884D8'; // Fallback
     }
   };
