@@ -295,6 +295,7 @@ const JobLog: React.FC = () => {
       case 'Interviewing': return 'secondary';
       case 'Rejected': return 'destructive';
       case 'Offer': return 'outline';
+      case 'Exam': return 'secondary';
       default: return 'default';
     }
   };
@@ -307,6 +308,8 @@ const JobLog: React.FC = () => {
         return 'bg-red-500 text-white hover:bg-red-600';
       case 'Interviewing':
         return 'bg-blue-500 text-white hover:bg-blue-600';
+      case 'Exam':
+        return 'bg-purple-500 text-white hover:bg-purple-600';
       default:
         return '';
     }
@@ -394,6 +397,7 @@ const JobLog: React.FC = () => {
                       <SelectItem value="Interviewing">Interviewing</SelectItem>
                       <SelectItem value="Rejected">Rejected</SelectItem>
                       <SelectItem value="Offer">Offer</SelectItem>
+                      <SelectItem value="Exam">Exam</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -532,6 +536,7 @@ const JobLog: React.FC = () => {
                     <SelectItem value="Interviewing">Interviewing</SelectItem>
                     <SelectItem value="Rejected">Rejected</SelectItem>
                     <SelectItem value="Offer">Offer</SelectItem>
+                    <SelectItem value="Exam">Exam</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
